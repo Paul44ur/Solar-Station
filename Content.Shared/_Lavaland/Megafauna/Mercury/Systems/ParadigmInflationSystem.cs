@@ -2,6 +2,8 @@ using Content.Goobstation.Maths.FixedPoint;
 using Content.Shared._Lavaland.Megafauna.Mercury.Components;
 using Content.Shared._Lavaland.Megafauna.Mercury.Events;
 using Content.Shared.Damage;
+using Content.Shared.Damage.Components;
+using Content.Shared.Damage.Systems;
 using Content.Shared.Damage.Prototypes;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Popups;

@@ -1,6 +1,8 @@
 using Content.Shared._Lavaland.Megafauna.Mercury.Components;
 using Content.Shared._Lavaland.Megafauna.Mercury.Events;
 using Content.Shared.Damage;
+using Content.Shared.Damage.Components;
+using Content.Shared.Damage.Systems;
 using Content.Shared.Mobs.Systems;
 using Robust.Shared.Audio;
 using Robust.Shared.Audio.Systems;
