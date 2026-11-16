@@ -760,6 +760,9 @@
 - type: Tag
   id: XenobiologyAdamantineExtract
 
+- type: Tag
+  id: XenobiologyRainbowExtract
+
 # XENOBIO - END
 
 - type: Tag
@@ -830,3 +833,6 @@
 
 - type: Tag
   id: XenobioSlimeFavoriteFood
+
+- type: Tag
+  id: MechChargingStationBoard

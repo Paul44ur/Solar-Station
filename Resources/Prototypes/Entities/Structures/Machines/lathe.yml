@@ -512,6 +512,7 @@
     - MechWeaponsSecurityHeavy
     - SecurityAmmoGoob
     - SecurityCybernetics
+    - BiologicalDeterrence
     # - ServiceWeapons
     - SpecOpsGoogles
     - PowerCells
@@ -797,6 +798,7 @@
     - OreSmelting
     - RGlassSmelting
     - AdvancedSmelting
+    - ORTSmelting # Lavaland
 
 - type: entity
   parent: BaseLathe
