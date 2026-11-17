@@ -250,10 +250,12 @@ public sealed partial class BloodsuckerGoHomeSystem : EntitySystem
         // Keep uncuffing until all cuffs are removed
         while (cuffable.CuffedHandCount > 0)
         {
-            var cuffs = cuffable.LastAddedCuffs;
-            if (!Exists(cuffs))
+            if (!_cuffable.TryGetLastCuff((uid, cuffable), out var cuffs))
                 break;
-            _cuffable.Uncuff(uid, uid, cuffs);
+            var before = cuffable.CuffedHandCount;
+            _cuffable.Uncuff(uid, uid, cuffs.Value);
+            if (cuffable.CuffedHandCount >= before)
+                break;
         }
     }
 

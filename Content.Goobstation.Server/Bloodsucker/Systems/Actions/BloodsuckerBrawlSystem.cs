@@ -182,7 +182,10 @@ public sealed partial class BloodsuckerBrawlSystem : EntitySystem
         if (!TryComp(ent.Owner, out CuffableComponent? cuffable) || cuffable.CuffedHandCount == 0)
             return false;
 
-        _cuffable.Uncuff(ent.Owner, ent.Owner, cuffable.LastAddedCuffs);
+        if (!_cuffable.TryGetLastCuff((ent.Owner, cuffable), out var cuffs))
+            return false;
+
+        _cuffable.Uncuff(ent.Owner, ent.Owner, cuffs.Value);
         _audio.PlayPvs(comp.RestraintBreakSound, ent.Owner);
 
         _popup.PopupPredicted(
@@ -255,7 +258,7 @@ public sealed partial class BloodsuckerBrawlSystem : EntitySystem
                 _transform.GetMapCoordinates(target),
                 comp.EMPRadius,
                 comp.EMPConsumption,
-                comp.EMPDuration);
+                TimeSpan.FromSeconds(comp.EMPDuration));
         }
     }
 
