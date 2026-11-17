@@ -25,6 +25,7 @@ public sealed class SpawnerSystem : EntitySystem
     {
         base.Update(frameTime);
 
+        _fired.Clear();
         var curTime = _timing.CurTime;
         var query = EntityQueryEnumerator<TimedSpawnerComponent>();
         while (query.MoveNext(out var uid, out var timedSpawner))
@@ -38,7 +39,7 @@ public sealed class SpawnerSystem : EntitySystem
 
         foreach (var (uid, timedSpawner) in _fired)
         {
-            if (!TerminatingOrDeleted(uid))
+            if (!timedSpawner.Deleted && !TerminatingOrDeleted(uid))
                 OnTimerFired(uid, timedSpawner);
         }
 
