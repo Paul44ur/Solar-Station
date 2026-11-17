@@ -165,3 +165,20 @@ devil-clause-contract-time = The Contractee's remaining time is set at ten minut
 devil-clause-contract-lifeforce = The Contractee surrenders a portion of their life force to the Contractor.
 devil-clause-contract-swiftness = The Contractee surrenders a measure of their speed to the Contractor.
 devil-clause-contract-might = The Contractee surrenders a measure of their strength to the Contractor.
+
+# Solar: mass contract
+devil-mass-contract-menu-title = Mass Contract
+devil-contract-menu-damned-price = Price from those whose soul you already own:
+devil-mass-contract-sent = You offer your contract to {$count} {$count ->
+    [one] mortal
+   *[other] mortals
+}.
+devil-mass-contract-received = A contract from below appears in your hand!
+devil-mass-contract-offer-title = A Contract From Below
+devil-mass-contract-offer-prompt = A contract has appeared in your hand. Read it before you choose. If you refuse, it will burn. If you wait, it will crumble away.
+devil-mass-contract-offer-accept = Sign the contract
+devil-mass-contract-offer-decline = Refuse
+devil-mass-contract-declined = The contract bursts into flames in {$target}'s hands!
+devil-mass-contract-declined-chaplain = The contract bursts into flames, but your faith shields you from the fire.
+devil-mass-contract-crumbles = The contract crumbles to ash.
+devil-mass-contract-chaplain-fallen = Your faith goes silent. Whatever god you served has turned away from you.

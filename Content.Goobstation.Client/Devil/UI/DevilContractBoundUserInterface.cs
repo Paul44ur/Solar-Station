@@ -20,12 +20,20 @@ public sealed class DevilContractBoundUserInterface : BoundUserInterface
         base.Open();
 
         _menu = this.CreateWindow<DevilContractClauseMenu>();
-        _menu.Confirmed += clauses =>
+        _menu.Confirmed += (clauses, damned) =>
         {
-            SendMessage(new DevilContractClausesChosenMessage(clauses));
+            SendMessage(new DevilContractClausesChosenMessage(clauses, damned));
             Close();
         };
 
         _menu.OpenCentered();
+    }
+
+    protected override void UpdateState(BoundUserInterfaceState state)
+    {
+        base.UpdateState(state);
+
+        if (state is DevilContractMenuState menuState)
+            _menu?.SetMass(menuState.Mass);
     }
 }

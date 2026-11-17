@@ -80,6 +80,8 @@
         type: PaperBoundUserInterface
       enum.DevilContractUiKey.Key:
         type: DevilContractBoundUserInterface
+      enum.DevilMassContractOfferUiKey.Key:
+        type: DevilMassContractOfferBoundUserInterface
 
 - type: entity
   id: PaperDevilContractRevival

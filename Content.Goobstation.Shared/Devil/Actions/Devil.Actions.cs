@@ -40,6 +40,9 @@ public sealed partial class DevilToggleInfernalAuraEvent : InstantActionEvent;
 // Solar: Archdevil collects an owned soul on touch.
 public sealed partial class DevilSoulHarvestEvent : EntityTargetActionEvent;
 
+// Solar: Archdevil offers one contract to everyone around it at once.
+public sealed partial class DevilMassContractEvent : InstantActionEvent;
+
 // Solar: lesser form summons imps.
 public sealed partial class DevilSummonImpsEvent : InstantActionEvent
 {

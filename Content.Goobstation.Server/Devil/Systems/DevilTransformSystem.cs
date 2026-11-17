@@ -128,6 +128,7 @@ public sealed partial class DevilTransformSystem : EntitySystem
             EnsureComp<InfernalAuraComponent>(newEntity);
             _actions.AddAction(newEntity, "ActionDevilHellsSevenRings");
             _actions.AddAction(newEntity, "ActionDevilSoulHarvest");
+            _actions.AddAction(newEntity, "ActionDevilMassContract");
         }
 
         Del(uid);

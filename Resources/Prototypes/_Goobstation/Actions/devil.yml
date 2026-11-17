@@ -372,3 +372,20 @@
       state: pitchfork
   - type: InstantAction
     event: !type:DevilSummonImpsEvent {}
+
+# Solar
+- type: entity
+  parent: BaseAction
+  id: ActionDevilMassContract
+  name: Mass contract
+  description: Write one contract, and offer it to every mortal within seven tiles at once. Those who refuse are burned. Those who hesitate are spared.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Action
+    useDelay: 360
+    itemIconStyle: NoItem
+    icon:
+      sprite: _Goobstation/Actions/devil.rsi
+      state: summon-contract
+  - type: InstantAction
+    event: !type:DevilMassContractEvent {}

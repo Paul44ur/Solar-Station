@@ -15,7 +15,15 @@ public sealed partial class DevilContractClauseMenu : DefaultWindow
 {
     [Dependency] private IPrototypeManager _proto = default!;
 
-    public event Action<List<string>>? Confirmed;
+    public event Action<List<string>, string?>? Confirmed;
+
+    /// <summary>
+    /// Solar: prices offered instead of Soul Ownership to mortals whose soul is already owned (mass contract only).
+    /// </summary>
+    private static readonly string[] DamnedPrices = ["lifeforce", "swiftness", "might", "ahand", "aleg", "anorgan"];
+
+    private readonly BoxContainer _damnedRow;
+    private readonly OptionButton _damnedPicker;
 
     private readonly Dictionary<string, (CheckBox Box, int Weight)> _clauses = new();
     private readonly Label _weightLabel;
@@ -51,18 +59,38 @@ public sealed partial class DevilContractClauseMenu : DefaultWindow
         AddSection(list, "devil-contract-menu-prices", clauses.Where(c => c.ClauseWeight > 0));
         AddSection(list, "devil-contract-menu-gifts", clauses.Where(c => c.ClauseWeight <= 0));
 
+        // Mass contract only: what to take from those whose soul is already owned.
+        _damnedRow = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Horizontal, Visible = false };
+        _damnedRow.AddChild(new Label { Text = Loc.GetString("devil-contract-menu-damned-price") });
+        _damnedPicker = new OptionButton { HorizontalExpand = true };
+        for (var i = 0; i < DamnedPrices.Length; i++)
+            _damnedPicker.AddItem(DevilClauseNames.GetName(DamnedPrices[i]), i);
+        _damnedPicker.OnItemSelected += args => _damnedPicker.SelectId(args.Id);
+        _damnedRow.AddChild(_damnedPicker);
+        root.AddChild(_damnedRow);
+
         _weightLabel = new Label();
         root.AddChild(_weightLabel);
 
         _confirmButton = new Button { Text = Loc.GetString("devil-contract-menu-confirm") };
         _confirmButton.OnPressed += _ =>
         {
-            Confirmed?.Invoke(_clauses.Where(c => c.Value.Box.Pressed).Select(c => c.Key).ToList());
+            var damned = _damnedRow.Visible ? DamnedPrices[_damnedPicker.SelectedId] : null;
+            Confirmed?.Invoke(_clauses.Where(c => c.Value.Box.Pressed).Select(c => c.Key).ToList(), damned);
         };
         root.AddChild(_confirmButton);
 
         Contents.AddChild(root);
         UpdateWeight();
+    }
+
+    /// <summary>
+    /// Solar: switch the menu into mass contract mode.
+    /// </summary>
+    public void SetMass(bool mass)
+    {
+        _damnedRow.Visible = mass;
+        Title = Loc.GetString(mass ? "devil-mass-contract-menu-title" : "devil-contract-menu-title");
     }
 
     private void AddSection(BoxContainer list, string header, IEnumerable<DevilClausePrototype> clauses)

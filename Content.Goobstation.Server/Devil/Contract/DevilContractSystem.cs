@@ -62,6 +62,7 @@ public sealed partial class DevilContractSystem : EntitySystem
         base.Initialize();
         InitializeRegex();
         InitializeSpecialActions();
+        InitializeMassContract(); // Solar
 
         SubscribeLocalEvent<DevilContractComponent, BeingSignedAttemptEvent>(OnContractSignAttempt);
         SubscribeLocalEvent<DevilContractComponent, ExaminedEvent>(OnExamined);
@@ -160,16 +161,30 @@ public sealed partial class DevilContractSystem : EntitySystem
             return;
         }
 
-        // Each clause gets its name (which the contract parser reads) and a line telling the mortal what it means.
+        _ui.CloseUi(contract.Owner, DevilContractUiKey.Key);
+
+        // Solar: a mass contract template is handed out to everyone nearby instead.
+        if (HasComp<DevilMassContractTemplateComponent>(contract))
+        {
+            DistributeMassContract(contract, user, chosen, args.DamnedPrice);
+            return;
+        }
+
+        WriteClauses((contract.Owner, contract.Comp, paper), chosen);
+    }
+
+    /// <summary>
+    /// Solar: writes the clauses onto a contract, each with a line telling the mortal what it means.
+    /// </summary>
+    private void WriteClauses(Entity<DevilContractComponent, PaperComponent> contract, List<string> chosen)
+    {
         var lines = chosen.Select(id => Loc.GetString("devil-contract-clause-line",
             ("name", DevilClauseNames.GetName(id)),
             ("desc", Loc.TryGetString($"devil-clause-contract-{id}", out var desc) ? desc : string.Empty)));
 
-        _paper.SetContent((contract.Owner, paper), Loc.GetString("devil-contract-content-chosen", ("clauses", string.Join("\n", lines))));
-        contract.Comp.ClausesChosen = true;
-        UpdateContractWeight(contract);
-
-        _ui.CloseUi(contract.Owner, DevilContractUiKey.Key);
+        _paper.SetContent((contract.Owner, contract.Comp2), Loc.GetString("devil-contract-content-chosen", ("clauses", string.Join("\n", lines))));
+        contract.Comp1.ClausesChosen = true;
+        UpdateContractWeight((contract.Owner, contract.Comp1));
     }
 
     private void TryBurnContract(Entity<DevilContractComponent> contract, Entity<DevilComponent> devil)
