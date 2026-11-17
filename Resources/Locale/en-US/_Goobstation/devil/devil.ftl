@@ -52,3 +52,7 @@ devil-voice-of-hell-target = A roar from below fills your head. Your voice is go
 devil-voice-of-hell-user = You silence {$target} with a fraction of hell's might.
 devil-voice-of-hell-resisted = {CAPITALIZE($target)} resists your voice.
 devil-voice-of-hell-failed = Their voice can't be taken.
+
+# Solar: Hell's Seven Rings
+devil-infernal-aura-on = The rings of hell blaze to life around you.
+devil-infernal-aura-off = You smother the rings of hell.

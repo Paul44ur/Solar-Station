@@ -34,6 +34,9 @@ public sealed partial class DevilAuthorityEvent : InstantActionEvent;
 
 public sealed partial class DevilPossessionEvent : EntityTargetActionEvent;
 
+// Solar: Archdevil toggle for its infernal aura (Hell's Seven Rings).
+public sealed partial class DevilToggleInfernalAuraEvent : InstantActionEvent;
+
 // Solar: lesser form ability that mutes a target for a short time.
 public sealed partial class DevilVoiceOfHellEvent : EntityTargetActionEvent
 {

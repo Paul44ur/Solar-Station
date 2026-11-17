@@ -302,9 +302,12 @@ public sealed partial class DevilSystem : EntitySystem
 
         devil.Comp.LastTriggeredTime = _timing.CurTime;
 
+        // Solar: the Archdevil's true name cuts deeper.
+        var archMultiplier = HasComp<Content.Goobstation.Shared.Devil.Components.ArchdevilComponent>(devil) ? 2f : 1f;
+
         if (HasComp<BibleUserComponent>(args.Source))
         {
-            _damageable.TryChangeDamage(devil.Owner, devil.Comp.DamageOnTrueName * devil.Comp.BibleUserDamageMultiplier, true);
+            _damageable.TryChangeDamage(devil.Owner, devil.Comp.DamageOnTrueName * devil.Comp.BibleUserDamageMultiplier * archMultiplier, true);
             _stun.TryAddStunDuration(devil, devil.Comp.ParalyzeDurationOnTrueName * devil.Comp.BibleUserDamageMultiplier);
 
             var popup = Loc.GetString("devil-true-name-heard-chaplain", ("speaker", args.Source), ("target", devil));
@@ -313,7 +316,7 @@ public sealed partial class DevilSystem : EntitySystem
         else
         {
             _stun.TryAddStunDuration(devil, devil.Comp.ParalyzeDurationOnTrueName);
-            _damageable.TryChangeDamage(devil.Owner, devil.Comp.DamageOnTrueName, true);
+            _damageable.TryChangeDamage(devil.Owner, devil.Comp.DamageOnTrueName * archMultiplier, true);
 
             var popup = Loc.GetString("devil-true-name-heard", ("speaker", args.Source), ("target", devil));
             _popup.PopupEntity(popup, devil, PopupType.LargeCaution);

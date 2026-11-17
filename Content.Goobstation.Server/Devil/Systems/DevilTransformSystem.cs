@@ -116,6 +116,10 @@ public sealed partial class DevilTransformSystem : EntitySystem
 
             if (newComp.ArchFireActionEntity == null)
                 _actions.AddAction(newEntity, ref newComp.ArchFireActionEntity, newComp.ArchFireAction);
+
+            // Solar: infernal aura and its toggle.
+            EnsureComp<InfernalAuraComponent>(newEntity);
+            _actions.AddAction(newEntity, "ActionDevilHellsSevenRings");
         }
 
         Del(uid);

@@ -314,3 +314,20 @@
       components:
       - MobState
     event: !type:DevilVoiceOfHellEvent {}
+
+# Solar
+- type: entity
+  parent: BaseAction
+  id: ActionDevilHellsSevenRings
+  name: Hell's Seven Rings
+  description: Kindle or smother the rings of hellfire around you. While they burn, every mortal near you burns with them.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Action
+    useDelay: 3
+    itemIconStyle: NoItem
+    icon:
+      sprite: _Goobstation/Actions/devil.rsi
+      state: archfire
+  - type: InstantAction
+    event: !type:DevilToggleInfernalAuraEvent {}
