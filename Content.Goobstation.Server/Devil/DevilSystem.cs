@@ -340,6 +340,10 @@ public sealed partial class DevilSystem : EntitySystem
             ? CondemnedBehavior.Banish
             : CondemnedBehavior.Delete;
 
+        // Solar: banished for good, so everything the devil took through tithes is returned.
+        if (behavior == CondemnedBehavior.Delete)
+            EntityManager.System<Systems.DevilTitheSystem>().ReleaseTithes(devil);
+
         _condemned.StartCondemnation(
             target,
             behavior: behavior,

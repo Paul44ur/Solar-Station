@@ -115,9 +115,9 @@ devil-clause-desc-legs = Their legs are permanently paralyzed.
 devil-clause-desc-innerpeace = They can only move one whole tile at a time.
 devil-clause-desc-death = The next time they die, they rise again once.
 devil-clause-desc-time = They die 10 minutes after signing, and nothing can bring them back.
-devil-clause-desc-lifeforce = They permanently lose 15 max health, left as devilish burns no medicine can heal. You gain 15 max health. They get it back if you die.
-devil-clause-desc-swiftness = They move 10% slower, and you move 5% faster (up to 50%). They get it back if you die.
-devil-clause-desc-might = Their attacks deal 20% less damage, and yours deal 10% more (up to 50%). They get it back if you die.
+devil-clause-desc-lifeforce = They permanently lose 15 max health, left as devilish burns no medicine can heal. You gain 15 max health. They get it back if you are banished for good.
+devil-clause-desc-swiftness = They move 10% slower, and you move 5% faster (up to 50%). They get it back if you are banished for good.
+devil-clause-desc-might = Their attacks deal 20% less damage, and yours deal 10% more (up to 50%). They get it back if you are banished for good.
 
 ## What the mortal reads on the contract.
 

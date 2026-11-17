@@ -32,7 +32,6 @@ public sealed partial class DevilTitheSystem : EntitySystem
         SubscribeLocalEvent<DevilContractLifeForceEvent>(OnLifeForce);
         SubscribeLocalEvent<DevilContractSwiftnessEvent>(OnSwiftness);
         SubscribeLocalEvent<DevilContractMightEvent>(OnMight);
-        SubscribeLocalEvent<DevilComponent, MobStateChangedEvent>(OnDevilStateChanged);
     }
 
     private void OnLifeForce(DevilContractLifeForceEvent args)
@@ -109,10 +108,12 @@ public sealed partial class DevilTitheSystem : EntitySystem
         _speed.RefreshMovementSpeedModifiers(newDevil);
     }
 
-    // When the devil dies, everything it took is given back.
-    private void OnDevilStateChanged(Entity<DevilComponent> ent, ref MobStateChangedEvent args)
+    /// <summary>
+    /// When the devil is banished for good, everything it took is given back.
+    /// </summary>
+    public void ReleaseTithes(EntityUid ent)
     {
-        if (args.NewMobState != MobState.Dead || !_mind.TryGetMind(ent, out var devilMind, out _))
+        if (!_mind.TryGetMind(ent, out var devilMind, out _))
             return;
 
         var query = EntityQueryEnumerator<DevilTithedComponent>();

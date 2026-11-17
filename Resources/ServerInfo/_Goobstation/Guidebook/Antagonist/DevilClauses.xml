@@ -3,7 +3,7 @@
 
   Every clause has a [bold]weight[/bold]. [bold]Prices[/bold] (positive weight) are taken from the mortal and make the deal worth more to you. [bold]Gifts[/bold] (zero or negative weight) are granted to the mortal and cost you.
   The weights on a contract must add up to 0 or more, or no mortal can sign it.
-  [bold]Life Force[/bold], [bold]Swiftness[/bold] and [bold]Might[/bold] are tithes: what the mortal loses, the devil gains. Everything is returned when the devil dies.
+  [bold]Life Force[/bold], [bold]Swiftness[/bold] and [bold]Might[/bold] are tithes: what the mortal loses, the devil gains. Everything is returned when the devil is banished for good.
 
   ## Prices
 
@@ -111,7 +111,7 @@
     [color=#999999][italic]15 Weight[/italic][/color]
   </Box>
 
-  - They permanently lose 15 max health, left as devilish burns no medicine can heal. You gain 15 max health. They get it back if you die.
+  - They permanently lose 15 max health, left as devilish burns no medicine can heal. You gain 15 max health. They get it back if you are banished for good.
 
   ### Belittling
   <Box>
@@ -125,14 +125,14 @@
     [color=#999999][italic]10 Weight[/italic][/color]
   </Box>
 
-  - Their attacks deal 20% less damage, and yours deal 10% more (up to 50%). They get it back if you die.
+  - Their attacks deal 20% less damage, and yours deal 10% more (up to 50%). They get it back if you are banished for good.
 
   ### Swiftness
   <Box>
     [color=#999999][italic]10 Weight[/italic][/color]
   </Box>
 
-  - They move 10% slower, and you move 5% faster (up to 50%). They get it back if you die.
+  - They move 10% slower, and you move 5% faster (up to 50%). They get it back if you are banished for good.
 
   ### Buckling
   <Box>
