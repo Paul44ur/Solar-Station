@@ -42,6 +42,7 @@ default-contract-content = This binding contract made this day between:
 
             {"["}bold]Clauses of Binding:{"["}/bold]
             {"["}italic]The following parties give up the following possessions{"["}/italic{"]"}
+            {"["}italic]{"["}color=#999999](Write more clauses with a pen, one per line, such as "Contractee: Greed". The guidebook lists every clause.){"["}/color]{"["}/italic]
 
             Contractee: Soul Ownership
             Contractee: Death

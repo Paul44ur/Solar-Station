@@ -17,6 +17,7 @@ using Content.Shared.Popups;
 using Content.Shared.StatusEffectNew;
 using Content.Shared.Traits.Assorted;
 using Robust.Shared.Audio.Systems;
+using Robust.Shared.Prototypes;
 
 namespace Content.Goobstation.Shared.Bloodsuckers.Systems;
 
@@ -35,6 +36,8 @@ public sealed partial class BloodsuckerFeedSystem : EntitySystem
     // TO DO: BloodsuckerMasqueradeSystem
 
     private EntityQuery<PullerComponent> _pullerQuery;
+
+    private static readonly EntProtoId ForcedSleepEffect = "StatusEffectForcedSleeping";
 
     public override void Initialize()
     {
@@ -183,7 +186,7 @@ public sealed partial class BloodsuckerFeedSystem : EntitySystem
                  ent.Owner, ent.Owner, PopupType.LargeCaution);
 
             _status.TryAddStatusEffect(
-                target, "ForcedSleep", out _,
+                target, ForcedSleepEffect, out _,
                 TimeSpan.FromSeconds(comp.SleepDuration));
         }
         else
@@ -338,6 +341,27 @@ public sealed partial class BloodsuckerFeedSystem : EntitySystem
             _bloodstream.SolutionContainer.UpdateChemicals(vampireBloodstream.BloodSolution!.Value);
         }
 
+        // Solar: the victim's blood carries their DNA, so the vampire's metabolism doesn't treat it as its own
+        // blood and digests it like food (UncookedAnimalProteins -> vomiting). Swap it for the vampire's own blood
+        // reagents and keep any other chemicals the victim had in their bloodstream.
+        var bloodTaken = FixedPoint2.Zero;
+        foreach (var quantity in stolen.Contents.ToArray())
+        {
+            if (!IsBloodReagent(quantity.Reagent.Prototype, targetBloodstream)
+                && !IsBloodReagent(quantity.Reagent.Prototype, vampireBloodstream))
+                continue;
+
+            stolen.RemoveReagent(quantity.Reagent, quantity.Quantity);
+            bloodTaken += quantity.Quantity;
+        }
+
+        var referenceVolume = vampireBloodstream.BloodReferenceSolution.Volume;
+        if (bloodTaken > FixedPoint2.Zero && referenceVolume > FixedPoint2.Zero)
+        {
+            foreach (var (reagent, quantity) in vampireBloodstream.BloodReferenceSolution)
+                stolen.AddReagent(reagent, bloodTaken * quantity / referenceVolume);
+        }
+
         // Pour stolen blood into vampire
         _bloodstream.SolutionContainer.TryAddSolution(vampireBloodstream.BloodSolution!.Value, stolen);
 
@@ -391,6 +415,17 @@ public sealed partial class BloodsuckerFeedSystem : EntitySystem
     }
 
     #region Helpers
+    private static bool IsBloodReagent(string prototype, BloodstreamComponent bloodstream)
+    {
+        foreach (var (reagent, _) in bloodstream.BloodReferenceSolution)
+        {
+            if (reagent.Prototype == prototype)
+                return true;
+        }
+
+        return false;
+    }
+
     private bool InRange(EntityUid a, EntityUid b)
     {
         if (!TryComp(a, out TransformComponent? ta) ||

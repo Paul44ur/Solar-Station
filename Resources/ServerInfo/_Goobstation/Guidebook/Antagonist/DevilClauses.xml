@@ -1,12 +1,4 @@
 <Document>
-<!-- Disabled cause too broken
- ## Mortality
-  <Box>
-    [color=#999999][italic]-135 Weight[/italic][/color]
-  </Box>
-
-  - Grants the target an unlimited amount of self revives.
--->
   ## Weakness
   <Box>
     [color=#999999][italic]-35 Weight[/italic][/color]
@@ -15,13 +7,6 @@
   - Cuts all damage the contractee takes in half.
   - Increases holy damage taken.
 
-<!-- Disabled, Used by shitters  ## Avarice
-  <Box>
-    [color=#999999][italic]-30 Weight[/italic][/color]
-  </Box>
-
-  - Allows the contractee to devour things whole, just like a dragon.
-  -->
 
   ## Fear of Death
   <Box>
