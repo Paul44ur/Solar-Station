@@ -46,3 +46,9 @@ prevent-buckling-message = Your contract prevents you from buckling to this obje
 jaunt-ascended-fail = You are unable to jaunt in your ascended form!
 
 devil-ascension-announcement = An infernal presence surges through the station. {$trueName} has shed their mortal guise and ascended back to their true form!
+
+# Solar: Voice of Hell
+devil-voice-of-hell-target = A roar from below fills your head. Your voice is gone!
+devil-voice-of-hell-user = You silence {$target} with a fraction of hell's might.
+devil-voice-of-hell-resisted = {CAPITALIZE($target)} resists your voice.
+devil-voice-of-hell-failed = Their voice can't be taken.

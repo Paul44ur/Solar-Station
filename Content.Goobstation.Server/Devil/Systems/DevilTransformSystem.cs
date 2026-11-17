@@ -99,6 +99,9 @@ public sealed partial class DevilTransformSystem : EntitySystem
             // Lesser devils don't get jaunt or archfire.
             _actions.RemoveAction(newEntity, newComp.JauntActionEntity);
             _actions.RemoveAction(newEntity, newComp.ArchFireActionEntity);
+
+            // Solar: lesser form gets Voice of Hell.
+            _actions.AddAction(newEntity, "ActionDevilVoiceOfHell");
         }
         else
         {

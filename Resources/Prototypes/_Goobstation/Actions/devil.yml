@@ -290,3 +290,27 @@
     event: !type:ProjectileSpellEvent
       prototype: ProjectileHellfireArch
       speed: 12
+
+# Solar
+- type: entity
+  parent: BaseAction
+  id: ActionDevilVoiceOfHell
+  name: Voice of hell
+  description: Takes their ability to speak by subjecting the victim to a fraction of hell's might.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Action
+    useDelay: 45
+    itemIconStyle: NoItem
+    icon:
+      sprite: _Goobstation/Actions/devil.rsi
+      state: authority
+  - type: TargetAction
+    range: 7
+    interactOnMiss: false
+  - type: EntityTargetAction
+    canTargetSelf: false
+    whitelist:
+      components:
+      - MobState
+    event: !type:DevilVoiceOfHellEvent {}

@@ -14,6 +14,9 @@ using Content.Shared.IdentityManagement;
 using Content.Shared.Mind;
 using Content.Shared.Popups;
 using Content.Shared.Storage.EntitySystems;
+using Content.Goobstation.Common.Religion;
+using Content.Shared.Speech.Muting;
+using Content.Shared.StatusEffect;
 
 namespace Content.Goobstation.Server.Devil;
 
@@ -21,6 +24,7 @@ public sealed partial class DevilSystem
 {
     [Dependency] private StoreSystem _store = default!;
     [Dependency] private SharedMindSystem _mind = default!;
+    [Dependency] private StatusEffectsSystem _statusEffects = default!;
 
     private void SubscribeAbilities()
     {
@@ -29,6 +33,7 @@ public sealed partial class DevilSystem
         SubscribeLocalEvent<DevilComponent, ShadowJauntEvent>(OnShadowJaunt);
         SubscribeLocalEvent<DevilComponent, DevilGripEvent>(OnDevilGrip);
         SubscribeLocalEvent<DevilComponent, DevilPossessionEvent>(OnPossess);
+        SubscribeLocalEvent<DevilComponent, DevilVoiceOfHellEvent>(OnVoiceOfHell);
     }
 
     private void OnContractCreated(Entity<DevilComponent> devil, ref CreateContractEvent args)
@@ -109,6 +114,32 @@ public sealed partial class DevilSystem
         devil.Comp.DevilGrip = args.Action.Owner;
     }
 
+
+    // Solar: Voice of Hell. Chaplains are protected by their faith.
+    private void OnVoiceOfHell(Entity<DevilComponent> devil, ref DevilVoiceOfHellEvent args)
+    {
+        if (args.Handled)
+            return;
+
+        var target = args.Target;
+        if (HasComp<BibleUserComponent>(target) || HasComp<DevilComponent>(target))
+        {
+            _popup.PopupEntity(Loc.GetString("devil-voice-of-hell-resisted", ("target", Identity.Entity(target, EntityManager))), devil, devil);
+            args.Handled = true;
+            return;
+        }
+
+        if (!_statusEffects.TryAddStatusEffect<MutedComponent>(target, "Muted", args.Duration, true))
+        {
+            _popup.PopupEntity(Loc.GetString("devil-voice-of-hell-failed"), devil, devil);
+            return;
+        }
+
+        args.Handled = true;
+        PlayFwooshSound(devil);
+        _popup.PopupEntity(Loc.GetString("devil-voice-of-hell-target"), target, target, PopupType.LargeCaution);
+        _popup.PopupEntity(Loc.GetString("devil-voice-of-hell-user", ("target", Identity.Entity(target, EntityManager))), devil, devil);
+    }
 
     private void OnPossess(Entity<DevilComponent> devil, ref DevilPossessionEvent args)
     {

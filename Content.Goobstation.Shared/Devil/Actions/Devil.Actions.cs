@@ -34,6 +34,13 @@ public sealed partial class DevilAuthorityEvent : InstantActionEvent;
 
 public sealed partial class DevilPossessionEvent : EntityTargetActionEvent;
 
+// Solar: lesser form ability that mutes a target for a short time.
+public sealed partial class DevilVoiceOfHellEvent : EntityTargetActionEvent
+{
+    [DataField]
+    public TimeSpan Duration = TimeSpan.FromSeconds(10);
+}
+
 public sealed partial class DevilOpenStoreEvent : InstantActionEvent;
 
 [Serializable]

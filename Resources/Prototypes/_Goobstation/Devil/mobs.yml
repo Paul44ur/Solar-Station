@@ -57,6 +57,9 @@
   - type: TemperatureDamage
     heatDamageThreshold: 9999
   - type: DevilLesserForm
+  - type: MovementSpeedModifier # Solar: lesser form is faster than a person
+    baseWalkSpeed: 3.5
+    baseSprintSpeed: 5.75
   - type: ThermalVision
     isActive: true
     color: white
