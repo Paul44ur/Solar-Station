@@ -17,10 +17,10 @@ devil-true-name-heard = The act of {$speaker} commanding {$target}'s true name c
 devil-true-name-heard-chaplain = The act of {$speaker}'s holy words commanding their true name burns away at {$target}'s very soul.
 
 objective-condition-contract-title = Collect Souls
-objective-condition-contract-description = Collect as many souls as possible.
+objective-condition-contract-description = Collect at least {$count} souls.
 
 objective-condition-weight-title = Make profitable deals.
-objective-condition-weight-description = Ensure the deals benefit you as much as possible.
+objective-condition-weight-description = Sign contracts that add up to a total weight of at least {$count}. Prices raise the weight, gifts lower it.
 
 hand-shake-prompt-verb = Offer handshake to {$target}
 hand-shake-accept-verb = Shake {$target}'s hand

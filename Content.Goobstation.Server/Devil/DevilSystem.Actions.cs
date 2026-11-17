@@ -122,11 +122,13 @@ public sealed partial class DevilSystem
         if (!TryUseAbility(args))
             return;
 
+        // Solar: scale a copy, so the stored base duration doesn't keep multiplying on every cast.
+        var duration = devil.Comp.PossessionDuration;
         if (devil.Comp.PowerLevel != DevilPowerLevel.None)
-            devil.Comp.PossessionDuration *= (int)devil.Comp.PowerLevel;
+            duration *= (int)devil.Comp.PowerLevel;
 
         // Only mark as handled if possession succeeds to avoid wasting the cooldown.
-        if (!_possession.TryPossessTarget(args.Target, args.Performer, devil.Comp.PossessionDuration, true, polymorphPossessor: true))
+        if (!_possession.TryPossessTarget(args.Target, args.Performer, duration, true, polymorphPossessor: true))
             return;
 
         Spawn(devil.Comp.JauntAnimationProto, Transform(args.Target).Coordinates);
