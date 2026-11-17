@@ -72,7 +72,14 @@
   components:
   - type: DevilContract
   - type: Paper
+    editingDisabled: true # Solar: clauses come from the summoning menu
     content: default-contract-content
+  - type: UserInterface
+    interfaces:
+      enum.PaperUiKey.Key:
+        type: PaperBoundUserInterface
+      enum.DevilContractUiKey.Key:
+        type: DevilContractBoundUserInterface
 
 - type: entity
   id: PaperDevilContractRevival

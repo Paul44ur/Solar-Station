@@ -9,6 +9,7 @@ using Content.Goobstation.Server.Possession;
 using Content.Goobstation.Shared.Devil;
 using Content.Goobstation.Shared.Devil.Condemned;
 using Content.Goobstation.Shared.Devil.Contract;
+using Content.Goobstation.Shared.Devil.UI;
 using Content.Shared._Imp.Drone; // Goob - Moved to shared
 using Content.Server.Body.Systems;
 using Content.Server.Explosion.EntitySystems;
@@ -50,6 +51,8 @@ public sealed partial class DevilContractSystem : EntitySystem
     [Dependency] private PolymorphSystem _polymorph = null!;
     [Dependency] private ExplosionSystem _explosion = null!;
     [Dependency] private MindSystem _mind = null!;
+    [Dependency] private SharedUserInterfaceSystem _ui = null!;
+    [Dependency] private PaperSystem _paper = null!;
 
     private ISawmill _sawmill = null!;
 
@@ -64,6 +67,7 @@ public sealed partial class DevilContractSystem : EntitySystem
         SubscribeLocalEvent<DevilContractComponent, GetVerbsEvent<AlternativeVerb>>(OnGetVerbs);
         SubscribeLocalEvent<DevilContractComponent, SignSuccessfulEvent>(OnSignStep);
         SubscribeLocalEvent<DevilContractComponent, FullyEatenEvent>(OnEaten);
+        SubscribeLocalEvent<DevilContractComponent, DevilContractClausesChosenMessage>(OnClausesChosen);
 
         _sawmill = Logger.GetSawmill("devil-contract");
     }
@@ -103,6 +107,67 @@ public sealed partial class DevilContractSystem : EntitySystem
         };
 
         args.Verbs.Add(burnVerb);
+
+        // Solar: reopen the clause menu if it was closed before choosing.
+        if (contract.Comp.ClausesChosen
+            || contract.Comp.IsVictimSigned
+            || user != contract.Comp.ContractOwner)
+            return;
+
+        AlternativeVerb chooseVerb = new()
+        {
+            Act = () => _ui.OpenUi(contract.Owner, DevilContractUiKey.Key, user),
+            Text = Loc.GetString("devil-contract-choose-clauses-verb"),
+            Icon = new SpriteSpecifier.Rsi(new("_Goobstation/Actions/devil.rsi"), "summon-contract"),
+            Priority = 2,
+        };
+
+        args.Verbs.Add(chooseVerb);
+    }
+
+    /// <summary>
+    /// Solar: opens the clause menu for the devil who just summoned this contract.
+    /// </summary>
+    public void OpenClauseMenu(EntityUid contract, EntityUid devil)
+    {
+        _ui.OpenUi(contract, DevilContractUiKey.Key, devil);
+    }
+
+    private void OnClausesChosen(Entity<DevilContractComponent> contract, ref DevilContractClausesChosenMessage args)
+    {
+        var user = args.Actor;
+        if (contract.Comp.ClausesChosen
+            || contract.Comp.IsVictimSigned
+            || user != contract.Comp.ContractOwner
+            || !TryComp<PaperComponent>(contract, out var paper))
+            return;
+
+        var chosen = new List<string>();
+        var weight = 0;
+        foreach (var id in args.Clauses)
+        {
+            if (chosen.Contains(id) || !_prototypeManager.TryIndex(id, out DevilClausePrototype? clause))
+                continue;
+
+            chosen.Add(id);
+            weight += clause.ClauseWeight;
+        }
+
+        if (weight < 0)
+        {
+            _popupSystem.PopupEntity(Loc.GetString("contract-uneven-odds", ("number", Math.Abs(weight))), contract, user, PopupType.MediumCaution);
+            return;
+        }
+
+        var contractee = Loc.GetString("devil-contract-contractee");
+        contractee = char.ToUpperInvariant(contractee[0]) + contractee[1..];
+        var lines = chosen.Select(id => $"{contractee}: {DevilClauseNames.GetName(id)}");
+
+        _paper.SetContent((contract.Owner, paper), Loc.GetString("devil-contract-content-chosen", ("clauses", string.Join("\n", lines))));
+        contract.Comp.ClausesChosen = true;
+        UpdateContractWeight(contract);
+
+        _ui.CloseUi(contract.Owner, DevilContractUiKey.Key);
     }
 
     private void TryBurnContract(Entity<DevilContractComponent> contract, Entity<DevilComponent> devil)
@@ -278,6 +343,14 @@ public sealed partial class DevilContractSystem : EntitySystem
             || HasComp<SoullessComponent>(contractee)
             || devil == contractee)
             return false;
+
+        // Solar: one soul per person, no matter how many deals or handshakes they make.
+        if (added > 0 && TryComp<DevilComponent>(devil, out var devilComp))
+        {
+            var source = _mind.TryGetMind(contractee, out var mindId, out _) ? mindId : contractee;
+            if (!devilComp.SoulSources.Add(source))
+                return false;
+        }
 
         var ev = new SoulAmountChangedEvent(devil, contractee, added);
         RaiseLocalEvent(devil, ref ev);

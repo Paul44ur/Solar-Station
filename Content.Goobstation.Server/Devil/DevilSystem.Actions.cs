@@ -43,6 +43,7 @@ public sealed partial class DevilSystem
             return;
 
         contractComponent.ContractOwner = args.Performer;
+        _contract.OpenClauseMenu(contract, args.Performer); // Solar
 
         PlayFwooshSound(devil);
         DoContractFlavor(devil, Identity.Name(devil, EntityManager));

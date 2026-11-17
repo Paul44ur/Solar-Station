@@ -67,6 +67,7 @@ public sealed partial class DevilTransformSystem : EntitySystem
             TryComp<DevilComponent>(newEntity, out var newDevil))
         {
             newDevil.Souls = oldDevil.Souls;
+            newDevil.SoulSources = new(oldDevil.SoulSources); // Solar
             newDevil.PowerLevel = oldDevil.PowerLevel;
         }
 

@@ -35,6 +35,12 @@ public sealed partial class DevilContractComponent : Component
     public bool IsDevilSigned;
 
     /// <summary>
+    /// Solar: has the devil picked this contract's clauses from the summoning menu yet?
+    /// </summary>
+    [DataField]
+    public bool ClausesChosen;
+
+    /// <summary>
     /// Has the contract been signed by both the devil and the victim?
     /// </summary>
     public bool IsContractFullySigned => IsVictimSigned && IsDevilSigned;
