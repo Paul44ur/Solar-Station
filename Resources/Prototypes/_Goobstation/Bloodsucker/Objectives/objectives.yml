@@ -1,0 +1,64 @@
+- type: entity
+  abstract: true
+  parent: BaseObjective
+  id: BaseBloodsuckerObjective
+  components:
+  - type: Objective
+    difficulty: 1.5
+    issuer: objective-issuer-bloodsucker
+
+- type: entity
+  parent: [ BaseBloodsuckerObjective, BaseSurviveObjective ]
+  id: BloodsuckerSurviveObjective
+  name: Survive
+  description: Stay undead until the shift ends. Final death ends your hunt.
+  components:
+  - type: Objective
+    icon:
+      sprite: _Goobstation/Bloodsucker/Actions/actions_bloodsucker.rsi
+      state: power_recover
+
+- type: entity
+  parent: BaseBloodsuckerObjective
+  id: BloodsuckerDrinkBloodObjective
+  components:
+  - type: Objective
+    icon:
+      sprite: _Goobstation/Bloodsucker/Actions/actions_bloodsucker.rsi
+      state: power_feed
+  - type: NumberObjective
+    min: 600
+    max: 900
+    title: objective-condition-bloodsucker-blood-title
+    description: objective-condition-bloodsucker-blood-description
+  - type: BloodsuckerDrinkBloodCondition
+
+- type: entity
+  parent: BaseBloodsuckerObjective
+  id: BloodsuckerRankObjective
+  components:
+  - type: Objective
+    icon:
+      sprite: _Goobstation/Bloodsucker/Actions/actions_bloodsucker.rsi
+      state: rank_up
+  - type: NumberObjective
+    min: 4
+    max: 5
+    title: objective-condition-bloodsucker-rank-title
+    description: objective-condition-bloodsucker-rank-description
+  - type: BloodsuckerRankCondition
+
+- type: entity
+  parent: BaseBloodsuckerObjective
+  id: BloodsuckerVassalObjective
+  components:
+  - type: Objective
+    icon:
+      sprite: _Goobstation/Bloodsucker/Actions/actions_bloodsucker.rsi
+      state: power_vassalize
+  - type: NumberObjective
+    min: 1
+    max: 2
+    title: objective-condition-bloodsucker-vassal-title
+    description: objective-condition-bloodsucker-vassal-description
+  - type: BloodsuckerVassalCondition

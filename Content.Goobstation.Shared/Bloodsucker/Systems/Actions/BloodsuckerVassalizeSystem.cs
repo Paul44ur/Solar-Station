@@ -139,6 +139,7 @@ public sealed partial class BloodsuckerVassalizeSystem : EntitySystem
         RemComp<BloodsuckerExVassalComponent>(target);
 
         EnsureComp<BloodsuckerVassalComponent>(target);
+        ent.Comp.VassalsMade++;
 
         _audio.PlayPredicted(comp.Sound, ent.Owner, ent.Owner);
 

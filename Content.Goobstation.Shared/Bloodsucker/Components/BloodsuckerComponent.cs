@@ -41,6 +41,30 @@ public sealed partial class BloodsuckerComponent : Component
     public int Rank = 1;
 
     /// <summary>
+    /// Highest rank whose powers have been granted.
+    /// </summary>
+    [DataField]
+    public int UnlockedRank;
+
+    /// <summary>
+    /// Blood drunk from victims, in units, over the whole round.
+    /// </summary>
+    [DataField]
+    public float BloodDrunk;
+
+    /// <summary>
+    /// Blood that has to be drunk to gain a rank.
+    /// </summary>
+    [DataField]
+    public float BloodPerRank = 300f;
+
+    [DataField]
+    public float BloodTowardsRank;
+
+    [DataField]
+    public int VassalsMade;
+
+    /// <summary>
     /// Blood volume (units) at or below which frenzy triggers.
     /// </summary>
     [DataField, AutoNetworkedField]

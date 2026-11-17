@@ -2,6 +2,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Content.Goobstation.Common.Blob;
+using Content.Goobstation.Server.Bloodsuckers.GameTicking.Rules;
 using Content.Goobstation.Server.Changeling.GameTicking.Rules;
 using Content.Goobstation.Server.Devil.GameTicking.Rules;
 using Content.Goobstation.Shared.Gangwars.Components;
@@ -75,6 +76,21 @@ public sealed partial class GoobAdminVerbSystem
             Message = Loc.GetString("admin-verb-make-devil"),
         };
         args.Verbs.Add(devilAntag);
+
+        Verb bloodsucker = new()
+        {
+            Text = Loc.GetString("admin-verb-text-make-bloodsucker"),
+            Category = VerbCategory.Antag,
+            Icon = new SpriteSpecifier.Rsi(new("/Textures/_Goobstation/Bloodsucker/Actions/actions_bloodsucker.rsi"), "power_feed"),
+            Act = () =>
+            {
+                _antag.ForceMakeAntag<BloodsuckerRuleComponent>(targetPlayer, "Bloodsucker");
+            },
+            Impact = LogImpact.High,
+            Message = Loc.GetString("admin-verb-make-bloodsucker"),
+        };
+        if (!HasComp<SiliconComponent>(args.Target))
+            args.Verbs.Add(bloodsucker);
 
         // Einstein Engines - Shadowlings
         Verb shadowling = new()

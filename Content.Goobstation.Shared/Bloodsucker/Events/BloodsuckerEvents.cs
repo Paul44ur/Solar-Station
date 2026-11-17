@@ -43,3 +43,9 @@ public sealed class BloodsuckerFrenzyEnteredEvent : EntityEventArgs
 /// Raised on the bloodsucker entity the moment it exits a frenzy.
 /// </summary>
 public sealed class BloodsuckerFrenzyExitedEvent : EntityEventArgs;
+
+/// <summary>
+/// Raised on a bloodsucker after it drinks blood from a victim.
+/// </summary>
+[ByRefEvent]
+public record struct BloodsuckerDrankBloodEvent(float Amount);

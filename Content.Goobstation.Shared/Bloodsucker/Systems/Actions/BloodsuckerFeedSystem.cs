@@ -365,6 +365,12 @@ public sealed partial class BloodsuckerFeedSystem : EntitySystem
         // Pour stolen blood into vampire
         _bloodstream.SolutionContainer.TryAddSolution(vampireBloodstream.BloodSolution!.Value, stolen);
 
+        if (bloodTaken > FixedPoint2.Zero)
+        {
+            var drankEv = new BloodsuckerDrankBloodEvent(bloodTaken.Float());
+            RaiseLocalEvent(ent, ref drankEv);
+        }
+
         _audio.PlayPredicted(comp.DrinkSound, ent, ent);
     }
 
