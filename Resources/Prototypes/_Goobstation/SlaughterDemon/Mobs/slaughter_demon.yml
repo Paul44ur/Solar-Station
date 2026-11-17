@@ -261,6 +261,3 @@
     - MindRoleGhostRoleSoloAntagonist
     raffle:
       settings: short
-    requirements:
-    - !type:OverallPlaytimeRequirement
-      time: 6000

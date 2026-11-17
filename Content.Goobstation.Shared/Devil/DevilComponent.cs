@@ -103,7 +103,6 @@ public sealed partial class DevilComponent : Component
     /// <summary>
     /// How many times the Devil can exorcised before the next time is permanent.
     /// </summary>
-    [DataField]
     public const int MaxBanishedBeforePermanent = 2;
 
 
