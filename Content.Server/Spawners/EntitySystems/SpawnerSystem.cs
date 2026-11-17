@@ -13,6 +13,8 @@ public sealed class SpawnerSystem : EntitySystem
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
 
+    private readonly List<(EntityUid, TimedSpawnerComponent)> _fired = new();
+
     public override void Initialize()
     {
         base.Initialize();
@@ -23,6 +25,7 @@ public sealed class SpawnerSystem : EntitySystem
     {
         base.Update(frameTime);
 
+        _fired.Clear();
         var curTime = _timing.CurTime;
         var query = EntityQueryEnumerator<TimedSpawnerComponent>();
         while (query.MoveNext(out var uid, out var timedSpawner))
@@ -30,10 +33,17 @@ public sealed class SpawnerSystem : EntitySystem
             if (timedSpawner.NextFire > curTime)
                 continue;
 
-            OnTimerFired(uid, timedSpawner);
-
             timedSpawner.NextFire += TimeSpan.FromSeconds(timedSpawner.IntervalSeconds);
+            _fired.Add((uid, timedSpawner));
         }
+
+        foreach (var (uid, timedSpawner) in _fired)
+        {
+            if (!timedSpawner.Deleted && !TerminatingOrDeleted(uid))
+                OnTimerFired(uid, timedSpawner);
+        }
+
+        _fired.Clear();
     }
 
     private void OnMapInit(Entity<TimedSpawnerComponent> ent, ref MapInitEvent args)

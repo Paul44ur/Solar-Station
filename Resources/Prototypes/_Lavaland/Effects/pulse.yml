@@ -21,7 +21,6 @@
     energy: 3
     color: Green
     castShadows: false
-  - type: Timer
   - type: ExpandAndCollapse
     expandTime: 10
     collapseTime: 10

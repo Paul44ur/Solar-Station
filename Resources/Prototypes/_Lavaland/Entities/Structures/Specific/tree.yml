@@ -118,7 +118,6 @@
         weightedEntityTable: LargeCrystalTreeLoot 
         minSpawn: 5 # This gon' be fun
         maxSpawn: 7
-  - type: Timer
   - type: TimedSpawner
     prototypes:
       - LavalandMobCrystalSeed
