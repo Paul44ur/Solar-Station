@@ -42,26 +42,14 @@ public sealed partial class DevilContractClauseMenu : DefaultWindow
         scroll.AddChild(list);
         root.AddChild(scroll);
 
-        // Costs to the victim first (positive weight), then the gifts they get.
-        foreach (var clause in _proto.EnumeratePrototypes<DevilClausePrototype>()
-                     .OrderByDescending(c => c.ClauseWeight)
-                     .ThenBy(c => c.ID))
-        {
-            var box = new CheckBox
-            {
-                Text = Loc.GetString("devil-contract-menu-clause",
-                    ("name", DevilClauseNames.GetName(clause.ID)),
-                    ("weight", clause.ClauseWeight)),
-                Pressed = DefaultClauses.Contains(clause.ID),
-            };
+        // Prices the mortal pays (positive weight) first, then the gifts they get (zero or negative weight).
+        var clauses = _proto.EnumeratePrototypes<DevilClausePrototype>()
+            .OrderByDescending(c => c.ClauseWeight)
+            .ThenBy(c => c.ID)
+            .ToList();
 
-            if (Loc.TryGetString($"devil-clause-desc-{clause.ID}", out var desc))
-                box.ToolTip = desc;
-
-            box.OnToggled += _ => UpdateWeight();
-            _clauses[clause.ID] = (box, clause.ClauseWeight);
-            list.AddChild(box);
-        }
+        AddSection(list, "devil-contract-menu-prices", clauses.Where(c => c.ClauseWeight > 0));
+        AddSection(list, "devil-contract-menu-gifts", clauses.Where(c => c.ClauseWeight <= 0));
 
         _weightLabel = new Label();
         root.AddChild(_weightLabel);
@@ -75,6 +63,40 @@ public sealed partial class DevilContractClauseMenu : DefaultWindow
 
         Contents.AddChild(root);
         UpdateWeight();
+    }
+
+    private void AddSection(BoxContainer list, string header, IEnumerable<DevilClausePrototype> clauses)
+    {
+        list.AddChild(new Label
+        {
+            Text = Loc.GetString(header),
+            StyleClasses = { "LabelHeading" },
+            Margin = new(0, 6, 0, 2),
+        });
+
+        foreach (var clause in clauses)
+        {
+            var box = new CheckBox
+            {
+                Text = Loc.GetString("devil-contract-menu-clause",
+                    ("name", DevilClauseNames.GetName(clause.ID)),
+                    ("weight", clause.ClauseWeight)),
+                Pressed = DefaultClauses.Contains(clause.ID),
+            };
+
+            box.OnToggled += _ => UpdateWeight();
+            _clauses[clause.ID] = (box, clause.ClauseWeight);
+            list.AddChild(box);
+
+            if (Loc.TryGetString($"devil-clause-desc-{clause.ID}", out var desc))
+            {
+                list.AddChild(new RichTextLabel
+                {
+                    Text = $"[color=#999999]{desc}[/color]",
+                    Margin = new(24, 0, 4, 4),
+                });
+            }
+        }
     }
 
     private void UpdateWeight()

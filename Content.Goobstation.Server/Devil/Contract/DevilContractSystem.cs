@@ -159,9 +159,10 @@ public sealed partial class DevilContractSystem : EntitySystem
             return;
         }
 
-        var contractee = Loc.GetString("devil-contract-contractee");
-        contractee = char.ToUpperInvariant(contractee[0]) + contractee[1..];
-        var lines = chosen.Select(id => $"{contractee}: {DevilClauseNames.GetName(id)}");
+        // Each clause gets its name (which the contract parser reads) and a line telling the mortal what it means.
+        var lines = chosen.Select(id => Loc.GetString("devil-contract-clause-line",
+            ("name", DevilClauseNames.GetName(id)),
+            ("desc", Loc.TryGetString($"devil-clause-contract-{id}", out var desc) ? desc : string.Empty)));
 
         _paper.SetContent((contract.Owner, paper), Loc.GetString("devil-contract-content-chosen", ("clauses", string.Join("\n", lines))));
         contract.Comp.ClausesChosen = true;
