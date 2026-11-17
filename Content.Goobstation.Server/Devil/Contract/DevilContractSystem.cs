@@ -53,6 +53,7 @@ public sealed partial class DevilContractSystem : EntitySystem
     [Dependency] private MindSystem _mind = null!;
     [Dependency] private SharedUserInterfaceSystem _ui = null!;
     [Dependency] private PaperSystem _paper = null!;
+    [Dependency] private Content.Shared.Roles.Jobs.SharedJobSystem _jobs = null!;
 
     private ISawmill _sawmill = null!;
 
@@ -293,6 +294,21 @@ public sealed partial class DevilContractSystem : EntitySystem
         if (_mind.TryGetMind(signer, out var mindId, out var mind) &&
             _mind.TryGetObjectiveComp<MeetContractWeightConditionComponent>(mindId, out var objectiveComp, mind))
             objectiveComp.ContractWeight += contract.Comp.ContractWeight;
+
+        // Solar: count the signer's department(s) toward "bargain with every department".
+        if (_mind.TryGetMind(signer, out var devilMind, out var devilMindComp)
+            && _mind.TryGetObjectiveComp<DevilDepartmentContractsConditionComponent>(devilMind, out var deptComp, devilMindComp)
+            && contract.Comp.Signer is { } victim
+            && _mind.TryGetMind(victim, out var victimMind, out _)
+            && _jobs.MindTryGetJobId(victimMind, out var jobId)
+            && jobId is { } job)
+        {
+            foreach (var department in _prototypeManager.EnumeratePrototypes<Content.Shared.Roles.DepartmentPrototype>())
+            {
+                if (department.Roles.Contains(job))
+                    deptComp.Signed.Add(department.ID);
+            }
+        }
     }
 
     private void HandleBothPartiesSigned(Entity<DevilContractComponent> contract)
@@ -318,12 +334,7 @@ public sealed partial class DevilContractSystem : EntitySystem
             return false;
         }
 
-        if (HasComp<MindShieldComponent>(user)
-            && !HasComp<DevilComponent>(user))
-        {
-            failReason = Loc.GetString("devil-contract-mind-shielded-failed");
-            return false;
-        }
+        // Solar: a mindshield doesn't protect you from a deal with hell itself, so mindshielded crew can sign.
 
         if (HasComp<PossessedComponent>(user))
         {

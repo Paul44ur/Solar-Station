@@ -421,6 +421,7 @@
     objectives:
     - DevilContractObjective
     - DevilWeightObjective
+    - DevilDepartmentObjective # Solar
   - type: AntagSelection
     selectionTime: IntraPlayerSpawn
     agentName: devil-roundend-name

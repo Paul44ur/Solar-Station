@@ -38,3 +38,24 @@
     title: objective-condition-weight-title
     description: objective-condition-weight-description
   - type: MeetContractWeightCondition
+
+# Solar
+- type: entity
+  parent: BaseDevilObjective
+  id: DevilDepartmentObjective
+  name: Bargain with every department
+  description: Get a contract signed by someone from Command, Security, Engineering, Medical, Science, Cargo and Service.
+  components:
+  - type: Objective
+    icon:
+      sprite: Objects/Misc/bureaucracy.rsi
+      state: contract-written
+  - type: DevilDepartmentContractsCondition
+    departments:
+    - Command
+    - Security
+    - Engineering
+    - Medical
+    - Science
+    - Cargo
+    - Civilian
