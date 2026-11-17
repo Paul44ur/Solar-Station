@@ -19,7 +19,6 @@
         - MobMask
         layer:
         - GlassLayer
-  - type: Timer
   - type: TimedSpawner
     prototypes:
       - ORTBeamSmall
@@ -42,7 +41,6 @@
   id: EmptyWarningSpawner # SpawnEntityActionEvent spawns in invisible entities, so this middle manager is needed.
   categories: [HideSpawnMenu]
   components:
-  - type: Timer
   - type: TriggerOnSpawn
   - type: SpawnOnTrigger
     proto: ORTWarningBoxLarge
@@ -77,7 +75,6 @@
         - MobMask
         layer:
         - GlassLayer
-  - type: Timer
   - type: TimedSpawner
     prototypes:
       - ORTMassiveThunderstrike
@@ -113,7 +110,6 @@
     energy: 2
     color: Green
     castShadows: true
-  - type: Timer
   - type: FadingIn
     fadeInTime: 0.5
   - type: FadingTimedDespawn
@@ -136,7 +132,6 @@
     energy: 3
     color: Purple
     castShadows: true
-  - type: Timer
   - type: FadingIn
     fadeInTime: 0.3
   - type: FadingTimedDespawn

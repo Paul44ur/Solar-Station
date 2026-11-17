@@ -16,7 +16,6 @@
     energy: 1
     color: Purple
     castShadows: false
-  - type: Timer
   - type: TimedSpawner
     prototypes:
       - CrystalSpikesStabbing
@@ -69,7 +68,6 @@
   - type: FadingTimedDespawn
     lifetime: 0.6
     fadeOutTime: 0.2
-  - type: Timer
   - type: Sprite
     sprite: _Lavaland/Structures/Specific/Crystal/crystal_spike.rsi
     state: spikes_stabbing
@@ -83,7 +81,6 @@
   - type: FadingTimedDespawn
     lifetime: 0.6
     fadeOutTime: 0.2
-  - type: Timer
   - type: Sprite
     sprite: _Lavaland/Structures/Specific/Crystal/crystal_spike.rsi
     state: spike
