@@ -134,7 +134,8 @@ public sealed partial class BloodsuckerHelpVassalSystem : EntitySystem
         }
 
         RemComp<BloodsuckerExVassalComponent>(target);
-        EnsureComp<BloodsuckerVassalComponent>(target);
+        if (!HasComp<BloodsuckerVassalComponent>(target))
+            AddComp(target, new BloodsuckerVassalComponent { Master = ent.Owner });
 
         _popup.PopupPredicted(
             Loc.GetString("bloodsucker-help-vassal-success-others", ("target", target)),

@@ -138,7 +138,8 @@ public sealed partial class BloodsuckerVassalizeSystem : EntitySystem
         // Remove ex-vassal if they were one
         RemComp<BloodsuckerExVassalComponent>(target);
 
-        EnsureComp<BloodsuckerVassalComponent>(target);
+        if (!HasComp<BloodsuckerVassalComponent>(target))
+            AddComp(target, new BloodsuckerVassalComponent { Master = ent.Owner });
         ent.Comp.VassalsMade++;
 
         _audio.PlayPredicted(comp.Sound, ent.Owner, ent.Owner);

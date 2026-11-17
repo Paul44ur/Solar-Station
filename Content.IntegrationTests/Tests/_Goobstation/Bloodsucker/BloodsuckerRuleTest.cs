@@ -1,6 +1,8 @@
 using System.Linq;
 using Content.Goobstation.Shared.Bloodsuckers.Components;
 using Content.Goobstation.Shared.Bloodsuckers.Components.Actions;
+using Content.Goobstation.Shared.Bloodsuckers.Components.Vassals;
+using Content.Server.Objectives.Components;
 using Content.Server.GameTicking;
 using Content.Server.Mind;
 using Content.Server.Roles;
@@ -41,7 +43,7 @@ public sealed class BloodsuckerRuleTest
             minPlayers = rule!.MinPlayers;
         });
 
-        await pair.Server.AddDummySessions(minPlayers);
+        var dummies = await pair.Server.AddDummySessions(minPlayers);
         await pair.RunTicksSync(5);
         await pair.SetAntagPreference("Bloodsucker", true);
 
@@ -67,6 +69,18 @@ public sealed class BloodsuckerRuleTest
             Assert.That(roleSys.MindIsAntagonist(mind));
             Assert.That(entMan.GetComponent<MindComponent>(mind).Objectives, Has.Count.EqualTo(4));
             Assert.That(entMan.EntityQuery<BloodsuckerDayNightComponent>().Count(), Is.EqualTo(1));
+        });
+
+        var thrall = dummies[0].AttachedEntity!.Value;
+        await server.WaitPost(() => entMan.AddComponent(thrall, new BloodsuckerVassalComponent { Master = player }));
+        await pair.RunTicksSync(5);
+
+        var thrallMind = entMan.GetComponent<MindComponent>(mindSys.GetMind(thrall)!.Value);
+        Assert.Multiple(() =>
+        {
+            Assert.That(roleSys.MindHasRole<BloodsuckerVassalRoleComponent>(mindSys.GetMind(thrall)!.Value));
+            Assert.That(thrallMind.Objectives.Any(o =>
+                entMan.TryGetComponent<TargetObjectiveComponent>(o, out var target) && target.Target == mind));
         });
 
         await pair.CleanReturnAsync();

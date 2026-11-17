@@ -6,6 +6,8 @@
   - type: BloodsuckerClaim
   - type: BloodsuckerMasquerade
   - type: BloodsuckerBrawl
+  - type: WeakToHoly
+    alwaysTakeHoly: true
   actions:
   - ActionBloodsuckerFeed
   - ActionBloodsuckerClaim

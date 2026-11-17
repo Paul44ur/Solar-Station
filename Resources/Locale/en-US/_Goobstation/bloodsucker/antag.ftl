@@ -12,7 +12,8 @@ bloodsucker-role-greeting =
     Use Feed on a victim to drink their blood. Feeding from a hard grab bites the neck and puts them to sleep. Being seen feeding breaks the Masquerade.
     Claim a coffin as your lair. When Sol rises, the sun burns you unless you rest inside it.
     You gain a rank for each Sol you sleep through in your coffin and for every 300u of blood you drink. Each rank unlocks new powers.
-    Burns only heal near your coffin. Masquerade lets you pass health scans and examination, but drops your undead resistances.
+    Bullets pass through you, lasers hurt you less, disablers barely tire you, and ordinary weapons barely hurt you. Holy water and weapons blessed by the Chaplain burn you badly.
+    Burns only heal near your coffin. Masquerade lets you pass health scans and examination, but drops your undead resistances, and taking 30 damage breaks it.
 
 bloodsucker-role-briefing = You are a Bloodsucker. Feed in secret, hide in your coffin during Sol, and rank up to unlock new powers.
 
@@ -33,3 +34,20 @@ objective-condition-bloodsucker-vassal-description = Bind {$count} {$count ->
     [one] crew member
     *[other] crew members
 } to your will on a persuasion rack.
+
+bloodsucker-melee-resisted = {CAPITALIZE(THE($target))} seems to take barely any damage from this.
+bloodsucker-holywater-burns-skin = The holy water sears your skin!
+bloodsucker-holywater-burns-inside = Holy water burns you from the inside!
+reagent-comp-condition-bloodsucker = bloodsucker
+
+blessed-weapon-blessed = You bless {THE($weapon)}. It glows with holy light.
+blessed-weapon-faded = The holy glow of {THE($weapon)} fades.
+blessed-weapon-examine = [color=gold]It glows with holy light.[/color]
+objective-condition-bloodsucker-vassal-serve-title = Help your master {$targetName} take over the station.
+
+bloodsucker-roundend-stats = [color=darkred]{$name}[/color] reached rank {$rank}, drank {$blood}u of blood and made {$made} {$made ->
+    [one] vassal
+    *[other] vassals
+}, {$vassals} still serving at the end.
+bloodsucker-masquerade-broken-user = The pain tears your Masquerade apart!
+bloodsucker-masquerade-broken-others = {CAPITALIZE(THE($user))}'s skin turns corpse-pale and their eyes flash red!

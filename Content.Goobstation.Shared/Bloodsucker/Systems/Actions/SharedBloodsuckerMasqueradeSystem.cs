@@ -1,6 +1,7 @@
 using Content.Goobstation.Shared.Bloodsuckers.Components;
 using Content.Goobstation.Shared.Bloodsuckers.Components.Actions;
 using Content.Goobstation.Shared.Bloodsuckers.Events;
+using Content.Shared.Damage.Systems;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Popups;
@@ -26,6 +27,7 @@ public abstract partial class SharedBloodsuckerMasqueradeSystem : EntitySystem
 
         SubscribeLocalEvent<BloodsuckerMasqueradeComponent, BloodsuckerMasqueradeEvent>(OnMasquerade);
         SubscribeLocalEvent<BloodsuckerMasqueradeComponent, ComponentShutdown>(OnShutdown);
+        SubscribeLocalEvent<BloodsuckerMasqueradeComponent, DamageChangedEvent>(OnDamageChanged);
     }
 
     private void OnMasquerade(Entity<BloodsuckerMasqueradeComponent> ent, ref BloodsuckerMasqueradeEvent args)
@@ -51,9 +53,26 @@ public abstract partial class SharedBloodsuckerMasqueradeSystem : EntitySystem
             Deactivate(ent);
     }
 
+    private void OnDamageChanged(Entity<BloodsuckerMasqueradeComponent> ent, ref DamageChangedEvent args)
+    {
+        if (!ent.Comp.Active || !args.DamageIncreased || args.DamageDelta is not { } delta)
+            return;
+
+        ent.Comp.DamageTaken += delta.GetTotal().Float();
+        if (ent.Comp.DamageTaken < ent.Comp.BreakDamage)
+            return;
+
+        Deactivate(ent);
+        _popup.PopupPredicted(
+            Loc.GetString("bloodsucker-masquerade-broken-user"),
+            Loc.GetString("bloodsucker-masquerade-broken-others", ("user", ent.Owner)),
+            ent.Owner, ent.Owner, PopupType.LargeCaution);
+    }
+
     protected virtual void Activate(Entity<BloodsuckerMasqueradeComponent> ent)
     {
         ent.Comp.Active = true;
+        ent.Comp.DamageTaken = 0f;
         ent.Comp.UpdateTimer = _timing.CurTime + ent.Comp.UpdateDelay;
 
         EnsureComp<BloodsuckerMasqueradingComponent>(ent.Owner);

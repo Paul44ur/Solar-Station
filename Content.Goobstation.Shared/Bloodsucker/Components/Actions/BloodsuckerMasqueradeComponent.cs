@@ -63,5 +63,14 @@ public sealed partial class BloodsuckerMasqueradeComponent : Component
     [DataField]
     public bool DisabledInFrenzy = true;
 
+    /// <summary>
+    /// Damage taken while masquerading that breaks the masquerade and reveals the bloodsucker.
+    /// </summary>
+    [DataField]
+    public float BreakDamage = 30f;
+
+    [DataField]
+    public float DamageTaken;
+
     #endregion
 }

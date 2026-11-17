@@ -1487,19 +1487,49 @@
             Heat: -0.2
             Shock: -0.2
             Cold: -0.2
+      - !type:HealthChange # Solar
+        conditions:
+        - !type:HasComponentCondition
+          components:
+          - type: Bloodsucker
+          guidebookComponentName: reagent-comp-condition-bloodsucker
+        damage:
+          types:
+            Holy: 3
+      - !type:PopupMessage # Solar
+        conditions:
+        - !type:HasComponentCondition
+          components:
+          - type: Bloodsucker
+        type: Local
+        visualType: LargeCaution
+        messages: [ "bloodsucker-holywater-burns-inside" ]
+        probability: 0.2
   reactiveEffects:
     Extinguish:
       methods: [ Touch ]
       effects:
       - !type:Extinguish
-    #Acidic: # Goobstation - Removing holy water damage on touch pending rework.
-    #  methods: [ Touch ]
-    #  effects:
-    #  - !type:HealthChange
-    #    ignoreResistances: false
-    #    damage:
-    #      types:
-    #        Holy: 0.5
+    Acidic: # Solar
+      methods: [ Touch ]
+      effects:
+      - !type:HealthChange
+        conditions:
+        - !type:HasComponentCondition
+          components:
+          - type: Bloodsucker
+          guidebookComponentName: reagent-comp-condition-bloodsucker
+        damage:
+          types:
+            Holy: 0.5
+      - !type:PopupMessage
+        conditions:
+        - !type:HasComponentCondition
+          components:
+          - type: Bloodsucker
+        type: Local
+        visualType: LargeCaution
+        messages: [ "bloodsucker-holywater-burns-skin" ]
   plantMetabolism:
   - !type:PlantAdjustWater
     amount: 1

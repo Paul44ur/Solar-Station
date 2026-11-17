@@ -10,6 +10,13 @@ using Content.Shared.Mobs.Systems;
 using Content.Shared.StatusEffect;
 using Robust.Shared.Containers;
 using Content.Shared.Alert;
+using Content.Shared.Damage.Events;
+using Content.Shared.Projectiles;
+using Content.Shared.Weapons.Ranged.Components;
+using Content.Shared.Weapons.Reflect;
+using Robust.Shared.Physics.Events;
+using Content.Shared.Popups;
+using Content.Shared.Weapons.Melee.Events;
 
 namespace Content.Goobstation.Shared.Bloodsuckers.Systems;
 
@@ -21,6 +28,8 @@ public sealed partial class BloodsuckerSystem : EntitySystem
     [Dependency] private MobStateSystem _mobState = default!;
     [Dependency] private StatusEffectsSystem _statusEffects = default!;
     [Dependency] private AlertsSystem _alerts = default!;
+    [Dependency] private SharedStaminaSystem _stamina = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
 
     public override void Initialize()
     {
@@ -33,6 +42,10 @@ public sealed partial class BloodsuckerSystem : EntitySystem
         SubscribeLocalEvent<BloodsuckerComponent, ExaminedEvent>(OnExamined);
         SubscribeLocalEvent<BloodsuckerComponent, ComponentInit>(OnBloodsuckerInit);
         SubscribeLocalEvent<BloodsuckerComponent, ComponentShutdown>(OnBloodsuckerShutdown);
+        SubscribeLocalEvent<BloodsuckerComponent, PreventCollideEvent>(OnPreventCollide);
+        SubscribeLocalEvent<BloodsuckerComponent, ProjectileReflectAttemptEvent>(OnProjectileHitAttempt);
+        SubscribeLocalEvent<BloodsuckerComponent, BeforeStaminaDamageEvent>(OnBeforeStaminaDamage);
+        SubscribeLocalEvent<BloodsuckerComponent, AttackedEvent>(OnAttacked);
     }
 
     private void OnBloodsuckerInit(Entity<BloodsuckerComponent> ent, ref ComponentInit args)
@@ -57,11 +70,56 @@ public sealed partial class BloodsuckerSystem : EntitySystem
         args.Multiplier *= ev.ModifiedDuration * ent.Comp.FlashDurationMultiplier;
     }
 
+    // Bullets pass straight through the undead.
+    private void OnPreventCollide(Entity<BloodsuckerComponent> ent, ref PreventCollideEvent args)
+    {
+        if (IsBullet(ent, args.OtherEntity))
+            args.Cancelled = true;
+    }
+
+    private void OnProjectileHitAttempt(Entity<BloodsuckerComponent> ent, ref ProjectileReflectAttemptEvent args)
+    {
+        if (IsBullet(ent, args.ProjUid))
+            args.Cancelled = true;
+    }
+
+    private bool IsBullet(Entity<BloodsuckerComponent> ent, EntityUid projectile)
+    {
+        return !ent.Comp.IsMasquerading
+            && HasComp<ProjectileComponent>(projectile)
+            && TryComp<ReflectiveComponent>(projectile, out var reflective)
+            && (reflective.Reflective & ReflectType.NonEnergy) != 0;
+    }
+
+    private void OnBeforeStaminaDamage(Entity<BloodsuckerComponent> ent, ref BeforeStaminaDamageEvent args)
+    {
+        if (ent.Comp.IsMasquerading || args.Value <= 0 || !HasComp<ProjectileComponent>(args.Source))
+            return;
+
+        // Projectile stamina damage ignores resistances, so cancel it and deal the reduced amount instead.
+        args.Cancelled = true;
+        _stamina.TakeStaminaDamage(ent, args.Value * ent.Comp.ProjectileStaminaMultiplier, ignoreResist: true);
+    }
+
+    // Only blessed weapons cut deep into the undead.
+    private void OnAttacked(EntityUid uid, BloodsuckerComponent comp, AttackedEvent args)
+    {
+        if (comp.IsMasquerading || HasComp<BlessedWeaponComponent>(args.Used))
+            return;
+
+        args.ModifiersList.Add(comp.UnblessedMeleeModifiers);
+        _popup.PopupPredicted(Loc.GetString("bloodsucker-melee-resisted", ("target", uid)), uid, args.User);
+    }
+
     private void OnDamageModify(Entity<BloodsuckerComponent> ent, ref DamageModifyEvent args)
     {
         // Skip immunities while masquerading
         if (ent.Comp.IsMasquerading)
             return;
+
+        // Hitscan lasers are the only damage whose origin is the gun itself.
+        if (HasComp<GunComponent>(args.Origin))
+            args.Damage *= ent.Comp.HitscanDamageMultiplier;
 
         // Negative damage = healing
         if (args.Damage.DamageDict.TryGetValue("Burn", out var burn) && burn < 0)
