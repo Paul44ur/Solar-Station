@@ -71,3 +71,11 @@ devil-summon-imps = The floor splits open and imps crawl out from below!
 ghost-role-information-devil-imp-name = Devil's imp
 ghost-role-information-devil-imp-description = A small, nasty creature from below, summoned to serve a devil.
 ghost-role-information-devil-imp-rules = You are a minion of the devil who summoned you. Obey and protect your master. You are an antagonist only as far as your master's goals go.
+
+# Solar: tithes
+devil-tithe-burns-examine = [color=darkred]Their skin is scarred with devilish burns that no medicine can mend.[/color]
+devil-tithe-returned = A weight lifts from you. What the devil took has been returned.
+
+# Solar: soul goal
+objective-condition-souls-percent-title = Collect {$count} souls
+objective-condition-souls-percent-description = Claim the souls of at least {$count} mortals on this station.

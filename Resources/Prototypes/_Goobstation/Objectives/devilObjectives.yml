@@ -59,3 +59,14 @@
     - Science
     - Cargo
     - Civilian
+
+# Solar: souls equal to 35-60% of the players in the round.
+- type: entity
+  parent: BaseDevilObjective
+  id: DevilSoulsObjective
+  components:
+  - type: Objective
+    icon:
+      sprite: Objects/Misc/bureaucracy.rsi
+      state: contract-written
+  - type: DevilSoulPercentObjective

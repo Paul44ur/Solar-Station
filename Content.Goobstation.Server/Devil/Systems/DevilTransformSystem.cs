@@ -21,6 +21,7 @@ namespace Content.Goobstation.Server.Devil.Systems;
 public sealed partial class DevilTransformSystem : EntitySystem
 {
     [Dependency] private SharedMindSystem _mind = default!;
+    [Dependency] private DevilTitheSystem _tithe = default!; // Solar
     [Dependency] private ActionsSystem _actions = default!;
     [Dependency] private ActionContainerSystem _actionContainer = default!;
 
@@ -68,8 +69,13 @@ public sealed partial class DevilTransformSystem : EntitySystem
         {
             newDevil.Souls = oldDevil.Souls;
             newDevil.SoulSources = new(oldDevil.SoulSources); // Solar
+            newDevil.SoulsWhileLesser = oldDevil.SoulsWhileLesser; // Solar
             newDevil.PowerLevel = oldDevil.PowerLevel;
         }
+
+        // Solar: keep what the devil gained from tithes.
+        if (TryComp<DevilTitheBonusComponent>(uid, out var oldBonus))
+            _tithe.ReapplyBonus(newEntity, oldBonus);
 
         // Clear the old entity's action bar entries before transferring,
         if (_actionsQuery.TryComp(uid, out var oldActionsComp))

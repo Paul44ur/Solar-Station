@@ -312,3 +312,19 @@
     preventAllRevives: true # :trol:
     deathTime: 600
     deathMessageId: devil-deal-time-ran-out
+
+# Solar: devil-side tithes. The mortal pays, the devil gains. Returned when the devil dies.
+- type: clause
+  id: lifeforce
+  clauseWeight: 15
+  event: !type:DevilContractLifeForceEvent
+
+- type: clause
+  id: swiftness
+  clauseWeight: 10
+  event: !type:DevilContractSwiftnessEvent
+
+- type: clause
+  id: might
+  clauseWeight: 10
+  event: !type:DevilContractMightEvent

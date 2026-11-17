@@ -68,6 +68,9 @@ devil-clause-name-legs = Legs
 devil-clause-name-innerpeace = Inner Peace
 devil-clause-name-death = Death
 devil-clause-name-time = Time
+devil-clause-name-lifeforce = Life Force
+devil-clause-name-swiftness = Swiftness
+devil-clause-name-might = Might
 
 ## What the devil sees in the menu: exactly what the clause does.
 
@@ -112,6 +115,9 @@ devil-clause-desc-legs = Their legs are permanently paralyzed.
 devil-clause-desc-innerpeace = They can only move one whole tile at a time.
 devil-clause-desc-death = The next time they die, they rise again once.
 devil-clause-desc-time = They die 10 minutes after signing, and nothing can bring them back.
+devil-clause-desc-lifeforce = They permanently lose 15 max health, left as devilish burns no medicine can heal. You gain 15 max health. They get it back if you die.
+devil-clause-desc-swiftness = They move 10% slower, and you move 5% faster (up to 50%). They get it back if you die.
+devil-clause-desc-might = Their attacks deal 20% less damage, and yours deal 10% more (up to 50%). They get it back if you die.
 
 ## What the mortal reads on the contract.
 
@@ -156,3 +162,6 @@ devil-clause-contract-legs = The Contractee surrenders the use of their legs.
 devil-clause-contract-innerpeace = The Contractee shall walk only in measured steps.
 devil-clause-contract-death = The Contractee is granted one escape from death.
 devil-clause-contract-time = The Contractee's remaining time is set at ten minutes. Not one second more.
+devil-clause-contract-lifeforce = The Contractee surrenders a portion of their life force to the Contractor.
+devil-clause-contract-swiftness = The Contractee surrenders a measure of their speed to the Contractor.
+devil-clause-contract-might = The Contractee surrenders a measure of their strength to the Contractor.

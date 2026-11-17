@@ -232,6 +232,10 @@ public sealed partial class DevilSystem : EntitySystem
 
         if (_mind.TryGetObjectiveComp<SignContractConditionComponent>(mindId, out var objectiveComp, mind))
             objectiveComp.ContractsSigned += args.Amount;
+
+        // Solar
+        if (_mind.TryGetObjectiveComp<DevilSoulPercentObjectiveComponent>(mindId, out var soulsComp, mind))
+            soulsComp.Souls += args.Amount;
     }
 
     private void OnShop(Entity<DevilComponent> ent, ref DevilOpenStoreEvent args)
