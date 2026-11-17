@@ -53,6 +53,7 @@
   - type: ComplexInteraction
   - type: ReplacementAccent
     accent: genericAggressive
+  - type: Temperature
   - type: TemperatureDamage
     heatDamageThreshold: 9999
   - type: DevilLesserForm
@@ -156,6 +157,7 @@
     speechVerb: LargeMob
   - type: Puller
     needsHands: false
+  - type: Temperature
   - type: TemperatureDamage
     heatDamageThreshold: 9999
   - type: InventorySlots
