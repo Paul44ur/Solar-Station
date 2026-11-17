@@ -6,24 +6,25 @@
   components:
     - type: Sprite
       sprite: _Lavaland/Clothing/Back/Modsuits/radiant.rsi
-    - type: ToggleableClothing
-      clothingPrototypes:
+    - type: ModSuit
+      theme: ModThemeStandard
+      parts:
         head: ClothingModsuitHelmetORTRadiant
         gloves: ClothingModsuitGauntletsORTRadiant
         outerClothing: ClothingModsuitChestplateORTRadiant
         shoes: ClothingModsuitBootsORTRadiant
     - type: ItemSlots
       slots:
-        cell_slot:
-          name: power-cell-slot-component-slot-name-default
-          startingItem: PowerCellMicroreactor
+        mod-core:
+          name: modsuit-core-slot-name
+          startingItem: ModsuitCoreStandardMicroreactor
           whitelist:
             components:
-              - PowerCell
+            - ModCore
     - type: Storage
       grid:
         - 0,0,10,3
-    - type: SealableClothingVisuals
+    - type: ModSuitSealedVisuals
       spriteLayer: sealed
       clothingVisuals:
         back:
@@ -38,7 +39,7 @@
   components:
     - type: Sprite
       sprite: _Lavaland/Clothing/Hands/ModSuits/radiant.rsi
-    - type: SealableClothingVisuals
+    - type: ModSuitSealedVisuals
       spriteLayer: sealed
       clothingVisuals:
         gloves:
@@ -85,7 +86,7 @@
       color: "#FFDF00"
       radius: 15 # Comically powerful
       energy: 10
-    - type: SealableClothingVisuals
+    - type: ModSuitSealedVisuals
       spriteLayer: sealed
       clothingVisuals:
         head:
@@ -117,7 +118,7 @@
           Caustic: 0.5
     - type: ExplosionResistance
       damageCoefficient: 0.8
-    - type: SealableClothingVisuals
+    - type: ModSuitSealedVisuals
       spriteLayer: sealed
       clothingVisuals:
         outerClothing:
@@ -148,7 +149,7 @@
     - type: Tag
       tags:
         - WhitelistChameleon
-    - type: SealableClothingVisuals
+    - type: ModSuitSealedVisuals
       spriteLayer: sealed
       clothingVisuals:
         shoes:
