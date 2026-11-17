@@ -28,6 +28,7 @@ public abstract partial class SharedBloodsuckerMasqueradeSystem : EntitySystem
         SubscribeLocalEvent<BloodsuckerMasqueradeComponent, BloodsuckerMasqueradeEvent>(OnMasquerade);
         SubscribeLocalEvent<BloodsuckerMasqueradeComponent, ComponentShutdown>(OnShutdown);
         SubscribeLocalEvent<BloodsuckerMasqueradeComponent, DamageChangedEvent>(OnDamageChanged);
+        SubscribeLocalEvent<BloodsuckerMasqueradeComponent, BloodsuckerActionsGatedEvent>(OnGated);
     }
 
     private void OnMasquerade(Entity<BloodsuckerMasqueradeComponent> ent, ref BloodsuckerMasqueradeEvent args)
@@ -51,6 +52,12 @@ public abstract partial class SharedBloodsuckerMasqueradeSystem : EntitySystem
     {
         if (ent.Comp.Active)
             Deactivate(ent);
+    }
+
+    private void OnGated(EntityUid uid, BloodsuckerMasqueradeComponent comp, BloodsuckerActionsGatedEvent args)
+    {
+        if (comp.Active)
+            Deactivate((uid, comp));
     }
 
     private void OnDamageChanged(Entity<BloodsuckerMasqueradeComponent> ent, ref DamageChangedEvent args)
@@ -132,6 +139,12 @@ public abstract partial class SharedBloodsuckerMasqueradeSystem : EntitySystem
     {
         if (comp.DisabledInFrenzy && HasComp<BloodsuckerFrenzyComponent>(uid))
             return false;
+
+        if (_humanity.IsLowHumanity(uid))
+        {
+            _popup.PopupPredicted(Loc.GetString("bloodsucker-humanity-too-low"), uid, uid, PopupType.SmallCaution);
+            return false;
+        }
 
         if (comp.HumanityCost != 0f && TryComp(uid, out BloodsuckerHumanityComponent? humanity))
             _humanity.ChangeHumanity(

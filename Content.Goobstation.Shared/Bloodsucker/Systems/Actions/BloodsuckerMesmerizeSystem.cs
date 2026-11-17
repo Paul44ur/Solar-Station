@@ -176,6 +176,12 @@ public sealed partial class BloodsuckerMesmerizeSystem : EntitySystem
         _popup.PopupPredicted(
             Loc.GetString("bloodsucker-mesmerize-success", ("target", target)),
             ent.Owner, ent.Owner, PopupType.Medium);
+
+        if (_humanity.IsHighHumanity(ent))
+        {
+            var forgetEv = new BloodsuckerForgetEvent(target);
+            RaiseLocalEvent(ent, ref forgetEv);
+        }
     }
 
     private bool TryUseCosts(Entity<BloodsuckerComponent> ent, BloodsuckerMesmerizeComponent comp)

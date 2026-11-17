@@ -8,6 +8,7 @@
   - type: BloodsuckerBrawl
   - type: WeakToHoly
     alwaysTakeHoly: true
+  - type: BloodsuckerHumanity
   actions:
   - ActionBloodsuckerFeed
   - ActionBloodsuckerClaim
@@ -21,11 +22,14 @@
   components:
   - type: BloodsuckerMaterialize
   - type: BloodsuckerVassalize
+    humanityCost: 5
+  - type: BloodsuckerBeguile
   - type: BloodsuckerOlfaction
   - type: BloodsuckerHaste
   actions:
   - ActionBloodsuckerMaterialize
   - ActionBloodsuckerVassalize
+  - ActionBloodsuckerBeguile
   - ActionBloodsuckerOlfactionAcquire
   - ActionBloodsuckerHaste
 

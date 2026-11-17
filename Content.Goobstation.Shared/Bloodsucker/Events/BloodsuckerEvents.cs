@@ -49,3 +49,9 @@ public sealed class BloodsuckerFrenzyExitedEvent : EntityEventArgs;
 /// </summary>
 [ByRefEvent]
 public record struct BloodsuckerDrankBloodEvent(float Amount);
+
+/// <summary>
+/// Raised on a high-humanity bloodsucker after Mesmerize lands, so the victim forgets the last minute.
+/// </summary>
+[ByRefEvent]
+public record struct BloodsuckerForgetEvent(EntityUid Target);

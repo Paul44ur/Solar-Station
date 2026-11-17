@@ -28,4 +28,10 @@ public sealed partial class BloodsuckerFeedingComponent : Component
     /// The victim's blood fraction.
     /// </summary>
     public float LastWarnedBloodFraction = 1f;
+
+    /// <summary>
+    /// Feeding on a sleeping victim with high humanity leaves no trace.
+    /// </summary>
+    [DataField]
+    public bool Gentle;
 }

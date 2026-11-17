@@ -194,6 +194,12 @@ public sealed partial class BloodsuckerVeilSystem : EntitySystem
         if (comp.DisabledInFrenzy && HasComp<BloodsuckerFrenzyComponent>(ent))
             return false;
 
+        if (_humanity.IsLowHumanity(ent))
+        {
+            _popup.PopupEntity(Loc.GetString("bloodsucker-humanity-too-low"), ent.Owner, ent.Owner, PopupType.SmallCaution);
+            return false;
+        }
+
         if (!TryComp(ent.Owner, out BloodstreamComponent? bloodstream))
             return false;
 

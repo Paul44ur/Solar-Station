@@ -185,6 +185,14 @@ public sealed partial class BloodsuckerSystem : EntitySystem
 
         args.PushMarkup(
             $"[color=lightblue]{Loc.GetString("bloodsucker-examined-pale", ("target", ent.Owner))}[/color]");
+
+        if (!TryComp<BloodsuckerHumanityComponent>(ent, out var humanity))
+            return;
+
+        if (humanity.CurrentHumanity < humanity.GatedActionMinHumanity)
+            args.PushMarkup($"[color=red]{Loc.GetString("bloodsucker-examined-monster", ("target", ent.Owner))}[/color]");
+        else if (humanity.CurrentHumanity < humanity.HighHumanity)
+            args.PushMarkup($"[color=red]{Loc.GetString("bloodsucker-examined-eyes", ("target", ent.Owner))}[/color]");
     }
 
     #region helpers

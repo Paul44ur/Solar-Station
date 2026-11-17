@@ -1,25 +1,60 @@
 using Content.Goobstation.Shared.Bloodsuckers.Components;
 using Content.Goobstation.Shared.Bloodsuckers.Events;
-using Robust.Shared.GameObjects;
-using System;
+using Content.Shared.Alert;
 
 namespace Content.Goobstation.Shared.Bloodsuckers.Systems;
 
 /// <summary>
 /// Manages the Bloodsucker's Humanity score.
 /// </summary>
-public sealed class BloodsuckerHumanitySystem : EntitySystem
+public sealed partial class BloodsuckerHumanitySystem : EntitySystem
 {
+    [Dependency] private AlertsSystem _alerts = default!;
+
     public override void Initialize()
     {
         base.Initialize();
 
         SubscribeLocalEvent<BloodsuckerHumanityComponent, ComponentInit>(OnHumanityInit);
+        SubscribeLocalEvent<BloodsuckerHumanityComponent, ComponentShutdown>(OnHumanityShutdown);
     }
 
     private void OnHumanityInit(Entity<BloodsuckerHumanityComponent> ent, ref ComponentInit args)
     {
         SyncFrenzyThreshold(ent);
+        _alerts.ShowAlert(ent.Owner, ent.Comp.Alert, 0);
+    }
+
+    private void OnHumanityShutdown(Entity<BloodsuckerHumanityComponent> ent, ref ComponentShutdown args)
+    {
+        _alerts.ClearAlert(ent.Owner, ent.Comp.Alert);
+    }
+
+    public void ChangeHumanity(EntityUid uid, float delta)
+    {
+        if (TryComp<BloodsuckerHumanityComponent>(uid, out var comp))
+            ChangeHumanity((uid, comp), delta);
+    }
+
+    public bool IsHighHumanity(EntityUid uid)
+    {
+        return TryComp<BloodsuckerHumanityComponent>(uid, out var comp) && comp.CurrentHumanity >= comp.HighHumanity;
+    }
+
+    public bool IsLowHumanity(EntityUid uid)
+    {
+        return TryComp<BloodsuckerHumanityComponent>(uid, out var comp) && comp.CurrentHumanity < comp.GatedActionMinHumanity;
+    }
+
+    /// <summary>
+    /// Strength multiplier for monstrous bloodsuckers: 1 at full humanity, up to 1 + MonsterBonus at none.
+    /// </summary>
+    public float GetMonsterMultiplier(EntityUid uid)
+    {
+        if (!TryComp<BloodsuckerHumanityComponent>(uid, out var comp) || comp.MaxHumanity <= 0f)
+            return 1f;
+
+        return 1f + comp.MonsterBonus * (1f - comp.CurrentHumanity / comp.MaxHumanity);
     }
 
     /// <summary>

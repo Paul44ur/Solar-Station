@@ -68,8 +68,10 @@ public sealed partial class BloodsuckerRuleSystem : GameRuleSystem<BloodsuckerRu
                     vassals++;
             }
 
+            var humanity = CompOrNull<BloodsuckerHumanityComponent>(uid)?.CurrentHumanity ?? 0f;
             sb.AppendLine(Loc.GetString("bloodsucker-roundend-stats",
                 ("name", _objectives.GetTitle((mindId, mind), Name(uid))),
+                ("humanity", (int) humanity),
                 ("rank", comp.Rank),
                 ("blood", (int) comp.BloodDrunk),
                 ("made", comp.VassalsMade),

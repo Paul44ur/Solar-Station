@@ -18,6 +18,9 @@ public sealed partial class BloodsuckerRankSystem : EntitySystem
     [Dependency] private IPrototypeManager _proto = default!;
     [Dependency] private SharedActionsSystem _actions = default!;
     [Dependency] private AntagSelectionSystem _antag = default!;
+    [Dependency] private BloodsuckerHumanitySystem _humanity = default!;
+
+    private const float SolHumanityGain = 2f;
 
     private static readonly SoundSpecifier RankUpSound =
         new SoundPathSpecifier("/Audio/_Goobstation/Ambience/Antag/bloodcult_eyes.ogg");
@@ -53,7 +56,13 @@ public sealed partial class BloodsuckerRankSystem : EntitySystem
         var query = EntityQueryEnumerator<BloodsuckerComponent, InsideCoffinComponent>();
         while (query.MoveNext(out var uid, out var comp, out _))
         {
+            // Patient bloodsuckers grow twice as fast from resting.
+            var patient = _humanity.IsHighHumanity(uid);
+            _humanity.ChangeHumanity(uid, SolHumanityGain);
+
             RankUp((uid, comp), Loc.GetString("bloodsucker-rank-up-sol"));
+            if (patient)
+                RankUp((uid, comp), Loc.GetString("bloodsucker-rank-up-patient"));
         }
     }
 

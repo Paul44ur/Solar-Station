@@ -1,4 +1,6 @@
+using Content.Shared.Alert;
 using Robust.Shared.GameStates;
+using Robust.Shared.Prototypes;
 
 namespace Content.Goobstation.Shared.Bloodsuckers.Components;
 
@@ -51,4 +53,19 @@ public sealed partial class BloodsuckerHumanityComponent : Component
     /// </summary>
     [DataField]
     public float GatedActionMinHumanity = 30f;
+
+    /// <summary>
+    /// At or above this humanity the Masquerade path perks work.
+    /// </summary>
+    [DataField]
+    public float HighHumanity = 70f;
+
+    /// <summary>
+    /// Extra feeding and Brawn strength at zero humanity, scaled down linearly as humanity rises.
+    /// </summary>
+    [DataField]
+    public float MonsterBonus = 0.5f;
+
+    [DataField]
+    public ProtoId<AlertPrototype> Alert = "BloodsuckerHumanity";
 }

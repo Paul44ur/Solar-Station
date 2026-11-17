@@ -16,6 +16,9 @@ using Content.Shared.Movement.Pulling.Components;
 using Content.Shared.Popups;
 using Content.Shared.StatusEffectNew;
 using Content.Shared.Traits.Assorted;
+using Content.Shared.Bed.Sleep;
+using Content.Shared.Stacks;
+using Content.Shared.Tag;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Prototypes;
 
@@ -27,6 +30,8 @@ namespace Content.Goobstation.Shared.Bloodsuckers.Systems;
 public sealed partial class BloodsuckerFeedSystem : EntitySystem
 {
     [Dependency] private SharedDoAfterSystem _doAfter = default!;
+    [Dependency] private TagSystem _tag = default!;
+    [Dependency] private SharedStackSystem _stack = default!;
     [Dependency] private SharedBloodstreamSystem _bloodstream = default!;
     [Dependency] private StatusEffectsSystem _status = default!;
     [Dependency] private BloodsuckerHumanitySystem _humanity = default!;
@@ -38,6 +43,7 @@ public sealed partial class BloodsuckerFeedSystem : EntitySystem
     private EntityQuery<PullerComponent> _pullerQuery;
 
     private static readonly EntProtoId ForcedSleepEffect = "StatusEffectForcedSleeping";
+    private static readonly ProtoId<TagPrototype> BloodpackTag = "Bloodpack";
 
     public override void Initialize()
     {
@@ -72,6 +78,12 @@ public sealed partial class BloodsuckerFeedSystem : EntitySystem
             return;
         }
 
+        if (_tag.HasTag(target, BloodpackTag))
+        {
+            DrinkBloodpack(ent, target, comp);
+            return;
+        }
+
         if (!TryUseCosts(ent, comp))
             return;
 
@@ -101,6 +113,13 @@ public sealed partial class BloodsuckerFeedSystem : EntitySystem
         // Interrupted
         if (args.Cancelled || args.Handled)
         {
+            // Letting a victim go before they are in danger keeps the beast in check.
+            if (feeding.HasBitten && feeding.LastWarnedBloodFraction > comp.BloodWarningSafe)
+                _humanity.ChangeHumanity(ent, comp.MercyHumanityGain);
+
+            if (feeding.Gentle)
+                _popup.PopupEntity(Loc.GetString("bloodsucker-feed-gentle-victim"), target, target, PopupType.Small);
+
             if (!feeding.Silent)
             {
                 // Visible to everyone nearby
@@ -149,8 +168,18 @@ public sealed partial class BloodsuckerFeedSystem : EntitySystem
         if (!feeding.HasBitten)
         {
             feeding.HasBitten = true;
-            PlayBiteMessage(ent, target, feeding, comp);
-            CheckMasquerade(ent, target);
+            feeding.Gentle = HasComp<SleepingComponent>(target) && _humanity.IsHighHumanity(ent);
+
+            if (feeding.Gentle)
+            {
+                _popup.PopupPredicted(Loc.GetString("bloodsucker-feed-gentle-user", ("target", target)),
+                    ent.Owner, ent.Owner, PopupType.Small);
+            }
+            else
+            {
+                PlayBiteMessage(ent, target, feeding, comp);
+                CheckMasquerade(ent, target);
+            }
         }
 
         PerformDrain(ent, target, comp);
@@ -241,6 +270,7 @@ public sealed partial class BloodsuckerFeedSystem : EntitySystem
             _popup.PopupPredicted(
                 Loc.GetString("bloodsucker-feed-noticed"),
                 ent.Owner, ent.Owner, PopupType.SmallCaution);
+            _humanity.ChangeHumanity(ent, -comp.SeenHumanityLoss);
 
             // TO DO: _masquerade.GiveInfraction(ent.Owner);
             break; // one infraction per feed
@@ -272,6 +302,7 @@ public sealed partial class BloodsuckerFeedSystem : EntitySystem
             _popup.PopupPredicted(
                 Loc.GetString("bloodsucker-feed-warning-fatal"),
                 ent.Owner, ent.Owner, PopupType.LargeCaution);
+            _humanity.ChangeHumanity(ent, -comp.FatalDrainHumanityLoss);
         }
         else if (fraction <= comp.BloodWarningDanger && feeding.LastWarnedBloodFraction > comp.BloodWarningDanger)
         {
@@ -305,7 +336,7 @@ public sealed partial class BloodsuckerFeedSystem : EntitySystem
 
     private void PerformDrain(Entity<BloodsuckerComponent> ent, EntityUid target, BloodsuckerFeedComponent comp)
     {
-        float amount = comp.BloodDrainAmount;
+        float amount = comp.BloodDrainAmount * _humanity.GetMonsterMultiplier(ent);
         if (TryComp(ent, out BloodsuckerFrenzyComponent? frenzy))
             amount *= frenzy.FeedMultiplier;
 
@@ -418,6 +449,25 @@ public sealed partial class BloodsuckerFeedSystem : EntitySystem
                 -comp.HumanityCost);
 
         return true;
+    }
+
+    private void DrinkBloodpack(Entity<BloodsuckerComponent> ent, EntityUid pack, BloodsuckerFeedComponent comp)
+    {
+        if (!_humanity.IsHighHumanity(ent))
+        {
+            _popup.PopupPredicted(Loc.GetString("bloodsucker-bloodpack-refuse"), ent.Owner, ent.Owner, PopupType.SmallCaution);
+            return;
+        }
+
+        if (!_stack.TryUse(pack, 1))
+            return;
+
+        _bloodstream.TryModifyBloodLevel(new Entity<BloodstreamComponent?>(ent.Owner, null), FixedPoint2.New(comp.BloodpackBlood));
+        _audio.PlayPredicted(comp.DrinkSound, ent, ent);
+        _popup.PopupPredicted(Loc.GetString("bloodsucker-bloodpack-drink"), ent.Owner, ent.Owner, PopupType.Small);
+
+        var drankEv = new BloodsuckerDrankBloodEvent(comp.BloodpackBlood * comp.BloodpackRankFactor);
+        RaiseLocalEvent(ent, ref drankEv);
     }
 
     #region Helpers
