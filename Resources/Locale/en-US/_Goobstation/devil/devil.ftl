@@ -73,9 +73,18 @@ ghost-role-information-devil-imp-description = A small, nasty creature from belo
 ghost-role-information-devil-imp-rules = You are a minion of the devil who summoned you. Obey and protect your master. You are an antagonist only as far as your master's goals go.
 
 # Solar: tithes
-devil-tithe-burns-examine = [color=darkred]Their skin is scarred with devilish burns that no medicine can mend.[/color]
+devil-tithe-burns-examine = [color=darkred]Their skin is marked with strange, deep scorch marks.[/color]
+condition-body-devil-deep-tissue = [color=darkred]{$entity} has deep tissue damage of unknown origin. Maximum health is reduced by {$amount}. It does not respond to any treatment.[/color]
 devil-tithe-returned = A weight lifts from you. What the devil took has been returned.
 
 # Solar: soul goal
 objective-condition-souls-percent-title = Collect {$count} souls
 objective-condition-souls-percent-description = Claim the souls of at least {$count} mortals on this station.
+
+# Solar: round end deal ledger
+devil-ledger-header = [color=#ac3a0d]The Devil's ledger:[/color]
+devil-ledger-devil-name = {$name} ({$trueName})
+devil-ledger-entry = - [color=white]{$devil}[/color] made a deal with [color=white]{$signer}[/color]: {$clauses}
+devil-ledger-harvested =   [color=red]{$signer}'s soul was harvested.[/color]
+devil-ledger-voided = [color=gray]{$clause} (voided by a loophole)[/color]
+devil-ledger-no-clauses = no clauses

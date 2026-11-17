@@ -41,6 +41,12 @@ public sealed partial class DevilContractComponent : Component
     public bool ClausesChosen;
 
     /// <summary>
+    /// Solar: clauses a lawyer has voided through a loophole.
+    /// </summary>
+    [DataField]
+    public HashSet<string> VoidedClauses = new();
+
+    /// <summary>
     /// Has the contract been signed by both the devil and the victim?
     /// </summary>
     public bool IsContractFullySigned => IsVictimSigned && IsDevilSigned;
@@ -57,4 +63,13 @@ public sealed partial class DevilContractComponent : Component
     /// </remarks>
     [DataField]
     public int ContractWeight;
+}
+
+/// <summary>
+/// Solar: a lawyer finished reading the contract and voids one clause.
+/// </summary>
+[System.Serializable, Robust.Shared.Serialization.NetSerializable]
+public sealed partial class DevilLoopholeDoAfterEvent : Content.Shared.DoAfter.SimpleDoAfterEvent
+{
+    public string Clause = string.Empty;
 }

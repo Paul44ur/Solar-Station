@@ -209,7 +209,8 @@
         recursive: true
 
 
-# Solar: weak minion summoned by a lesser devil. Uses the true devil sprite, shrunk and darkened, until it gets art of its own.
+# Solar: weak minion summoned by a lesser devil.
+# Placeholder art, see Resources/Textures/_Solar/Devil/ART_NEEDED.md. Remove scale and color once real art is in.
 - type: entity
   name: imp
   id: MobDevilImp
@@ -218,18 +219,18 @@
   components:
   - type: Sprite
     drawdepth: Mobs
-    sprite: _Goobstation/Devil/32x64.rsi
+    sprite: _Solar/Devil/imp.rsi
     scale: 0.6, 0.6
     color: "#b84040"
     layers:
     - map: [ "enum.DamageStateVisualLayers.Base" ]
-      state: true_devil
+      state: imp
   - type: DamageStateVisuals
     states:
       Alive:
-        Base: true_devil
+        Base: imp
       Dead:
-        Base: true_devil
+        Base: imp
   - type: MobThresholds
     thresholds:
       0: Alive

@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "license": "CC-BY-SA-3.0",
+  "copyright": "PLACEHOLDER: copies of Goobstation devil action icons (Sprited by SolsticeOfTheWinter and OnsenCapy). Replace with new art, see ART_NEEDED.md.",
+  "size": {
+    "x": 32,
+    "y": 32
+  },
+  "states": [
+    {
+      "name": "voice-of-hell"
+    },
+    {
+      "name": "hells-seven-rings"
+    },
+    {
+      "name": "soul-harvest"
+    },
+    {
+      "name": "summon-imps"
+    },
+    {
+      "name": "mass-contract"
+    }
+  ]
+}

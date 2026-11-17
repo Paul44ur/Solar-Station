@@ -303,8 +303,8 @@
     useDelay: 45
     itemIconStyle: NoItem
     icon:
-      sprite: _Goobstation/Actions/devil.rsi
-      state: authority
+      sprite: _Solar/Devil/actions.rsi # placeholder, see ART_NEEDED.md
+      state: voice-of-hell
   - type: TargetAction
     range: 7
     interactOnMiss: false
@@ -327,8 +327,8 @@
     useDelay: 3
     itemIconStyle: NoItem
     icon:
-      sprite: _Goobstation/Actions/devil.rsi
-      state: archfire
+      sprite: _Solar/Devil/actions.rsi # placeholder, see ART_NEEDED.md
+      state: hells-seven-rings
   - type: InstantAction
     event: !type:DevilToggleInfernalAuraEvent {}
 
@@ -344,8 +344,8 @@
     useDelay: 20
     itemIconStyle: NoItem
     icon:
-      sprite: _Goobstation/Actions/devil.rsi
-      state: heart-broken
+      sprite: _Solar/Devil/actions.rsi # placeholder, see ART_NEEDED.md
+      state: soul-harvest
   - type: TargetAction
     range: 1.5
     interactOnMiss: false
@@ -368,8 +368,8 @@
     useDelay: 300
     itemIconStyle: NoItem
     icon:
-      sprite: _Goobstation/Actions/devil.rsi
-      state: pitchfork
+      sprite: _Solar/Devil/actions.rsi # placeholder, see ART_NEEDED.md
+      state: summon-imps
   - type: InstantAction
     event: !type:DevilSummonImpsEvent {}
 
@@ -385,7 +385,7 @@
     useDelay: 360
     itemIconStyle: NoItem
     icon:
-      sprite: _Goobstation/Actions/devil.rsi
-      state: summon-contract
+      sprite: _Solar/Devil/actions.rsi # placeholder, see ART_NEEDED.md
+      state: mass-contract
   - type: InstantAction
     event: !type:DevilMassContractEvent {}

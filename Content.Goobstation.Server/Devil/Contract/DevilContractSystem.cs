@@ -63,6 +63,7 @@ public sealed partial class DevilContractSystem : EntitySystem
         InitializeRegex();
         InitializeSpecialActions();
         InitializeMassContract(); // Solar
+        InitializeLoophole(); // Solar
 
         SubscribeLocalEvent<DevilContractComponent, BeingSignedAttemptEvent>(OnContractSignAttempt);
         SubscribeLocalEvent<DevilContractComponent, ExaminedEvent>(OnExamined);
@@ -330,6 +331,67 @@ public sealed partial class DevilContractSystem : EntitySystem
     {
         UpdateContractWeight(contract);
         DoContractEffects(contract);
+        RecordDeal(contract); // Solar
+    }
+
+    /// <summary>
+    /// Solar: write the deal into the round end ledger.
+    /// </summary>
+    private void RecordDeal(Entity<DevilContractComponent> contract)
+    {
+        if (contract.Comp.Signer is not { } signer || contract.Comp.ContractOwner is not { } owner)
+            return;
+
+        var devilName = Name(owner);
+        if (TryComp<DevilComponent>(owner, out var devil) && !string.IsNullOrEmpty(devil.TrueName))
+            devilName = Loc.GetString("devil-ledger-devil-name", ("name", Name(owner)), ("trueName", devil.TrueName));
+
+        var record = new Content.Goobstation.Server.Devil.GameTicking.Rules.DevilDealRecord
+        {
+            Contract = contract.Owner,
+            Devil = devilName,
+            Signer = Name(signer),
+            SignerEntity = signer,
+            Clauses = contract.Comp.CurrentClauses.Select(c => DevilClauseNames.GetName(c.ID)).ToList(),
+        };
+
+        var rules = EntityQueryEnumerator<Content.Goobstation.Server.Devil.GameTicking.Rules.DevilRuleComponent>();
+        if (rules.MoveNext(out var rule))
+            rule.Deals.Add(record);
+    }
+
+    /// <summary>
+    /// Solar: look up a deal in the ledger by its contract.
+    /// </summary>
+    public Content.Goobstation.Server.Devil.GameTicking.Rules.DevilDealRecord? FindDeal(EntityUid contract)
+    {
+        var rules = EntityQueryEnumerator<Content.Goobstation.Server.Devil.GameTicking.Rules.DevilRuleComponent>();
+        while (rules.MoveNext(out var rule))
+        {
+            foreach (var deal in rule.Deals)
+            {
+                if (deal.Contract == contract)
+                    return deal;
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Solar: mark every deal this mortal signed as harvested.
+    /// </summary>
+    public void MarkHarvested(EntityUid signer)
+    {
+        var rules = EntityQueryEnumerator<Content.Goobstation.Server.Devil.GameTicking.Rules.DevilRuleComponent>();
+        while (rules.MoveNext(out var rule))
+        {
+            foreach (var deal in rule.Deals)
+            {
+                if (deal.SignerEntity == signer)
+                    deal.Harvested = true;
+            }
+        }
     }
 
     #endregion

@@ -109,6 +109,33 @@ public sealed partial class DevilTitheSystem : EntitySystem
     }
 
     /// <summary>
+    /// Solar: a lawyer voided a tithe clause, so the mortal gets that part back.
+    /// </summary>
+    public void VoidTithe(EntityUid target, BaseDevilContractEvent clauseEvent)
+    {
+        if (!TryComp<DevilTithedComponent>(target, out var tithed))
+            return;
+
+        switch (clauseEvent)
+        {
+            case DevilContractLifeForceEvent lifeForce:
+                var amount = FixedPoint2.Min(lifeForce.Amount, tithed.HealthLost);
+                tithed.HealthLost -= amount;
+                AdjustThresholds(target, amount);
+                break;
+            case DevilContractSwiftnessEvent swiftness when swiftness.TargetMultiplier > 0:
+                tithed.SpeedMultiplier = MathF.Min(tithed.SpeedMultiplier / swiftness.TargetMultiplier, 1f);
+                _speed.RefreshMovementSpeedModifiers(target);
+                break;
+            case DevilContractMightEvent might when might.TargetMultiplier > 0:
+                tithed.MeleeMultiplier = MathF.Min(tithed.MeleeMultiplier / might.TargetMultiplier, 1f);
+                break;
+        }
+
+        Dirty(target, tithed);
+    }
+
+    /// <summary>
     /// When the devil is banished for good, everything it took is given back.
     /// </summary>
     public void ReleaseTithes(EntityUid ent)

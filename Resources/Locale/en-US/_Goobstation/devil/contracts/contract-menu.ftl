@@ -115,7 +115,7 @@ devil-clause-desc-legs = Their legs are permanently paralyzed.
 devil-clause-desc-innerpeace = They can only move one whole tile at a time.
 devil-clause-desc-death = The next time they die, they rise again once.
 devil-clause-desc-time = They die 10 minutes after signing, and nothing can bring them back.
-devil-clause-desc-lifeforce = They permanently lose 15 max health, left as devilish burns no medicine can heal. You gain 15 max health. They get it back if you are banished for good.
+devil-clause-desc-lifeforce = They permanently lose 15 max health, which shows on health scanners as deep tissue damage no treatment can heal. You gain 15 max health. They get it back if you are banished for good.
 devil-clause-desc-swiftness = They move 10% slower, and you move 5% faster (up to 50%). They get it back if you are banished for good.
 devil-clause-desc-might = Their attacks deal 20% less damage, and yours deal 10% more (up to 50%). They get it back if you are banished for good.
 
@@ -182,3 +182,9 @@ devil-mass-contract-declined = The contract bursts into flames in {$target}'s ha
 devil-mass-contract-declined-chaplain = The contract bursts into flames, but your faith shields you from the fire.
 devil-mass-contract-crumbles = The contract crumbles to ash.
 devil-mass-contract-chaplain-fallen = Your faith goes silent. Whatever god you served has turned away from you.
+
+# Solar: lawyer loophole
+devil-loophole-verb = Find a loophole: {$clause}
+devil-loophole-start = You start combing through the fine print...
+devil-loophole-success = You find a loophole in the {$clause} clause. It no longer binds {$signer}.
+devil-loophole-freed = A lawyer found a loophole. The {$clause} clause no longer binds you!

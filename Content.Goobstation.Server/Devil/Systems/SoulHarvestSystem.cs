@@ -31,6 +31,7 @@ public sealed partial class SoulHarvestSystem : EntitySystem
     [Dependency] private DamageableSystem _damageable = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private IPrototypeManager _proto = default!;
+    [Dependency] private Contract.DevilContractSystem _contract = default!;
 
     private static readonly ProtoId<DamageGroupPrototype> Brute = "Brute";
     private static readonly ProtoId<DamageGroupPrototype> Burn = "Burn";
@@ -71,6 +72,7 @@ public sealed partial class SoulHarvestSystem : EntitySystem
         Dirty(target, unrevivable);
 
         EnsureComp<SoulHarvestedComponent>(target);
+        _contract.MarkHarvested(target);
 
         _chat.TryEmoteWithChat(target, "Scream", ignoreActionBlocker: true, forceEmote: true);
         _chat.TrySendInGameICMessage(target, Loc.GetString("devil-soul-harvest-emote"), InGameICChatType.Emote,
