@@ -16,14 +16,14 @@ using System.Numerics;
 
 namespace Content.Goobstation.Shared.Bloodsuckers.Systems;
 
-public sealed class BloodsuckerMesmerizeSystem : EntitySystem
+public sealed partial class BloodsuckerMesmerizeSystem : EntitySystem
 {
-    [Dependency] private readonly SharedDoAfterSystem _doAfter = default!;
-    [Dependency] private readonly SharedStunSystem _stun = default!;
-    [Dependency] private readonly StatusEffectsSystem _status = default!;
-    [Dependency] private readonly BloodsuckerHumanitySystem _humanity = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
+    [Dependency] private SharedDoAfterSystem _doAfter = default!;
+    [Dependency] private SharedStunSystem _stun = default!;
+    [Dependency] private StatusEffectsSystem _status = default!;
+    [Dependency] private BloodsuckerHumanitySystem _humanity = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
 
     public override void Initialize()
     {

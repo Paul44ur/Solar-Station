@@ -17,16 +17,16 @@ using Robust.Shared.Map;
 
 namespace Content.Goobstation.Server.Bloodsuckers.Systems;
 
-public sealed class BloodsuckerOlfactionSystem : EntitySystem
+public sealed partial class BloodsuckerOlfactionSystem : EntitySystem
 {
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly AudioSystem _audio = default!;
-    [Dependency] private readonly EntityLookupSystem _lookup = default!;
-    [Dependency] private readonly ForensicsSystem _forensics = default!;
-    [Dependency] private readonly SharedTransformSystem _transform = default!;
-    [Dependency] private readonly BloodsuckerHumanitySystem _humanity = default!;
-    [Dependency] private readonly SharedMapSystem _map = default!;
-    [Dependency] private readonly SharedActionsSystem _actions = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private AudioSystem _audio = default!;
+    [Dependency] private EntityLookupSystem _lookup = default!;
+    [Dependency] private ForensicsSystem _forensics = default!;
+    [Dependency] private SharedTransformSystem _transform = default!;
+    [Dependency] private BloodsuckerHumanitySystem _humanity = default!;
+    [Dependency] private SharedMapSystem _map = default!;
+    [Dependency] private SharedActionsSystem _actions = default!;
 
     public override void Initialize()
     {

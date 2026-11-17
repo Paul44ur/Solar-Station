@@ -6,20 +6,21 @@ using Content.Goobstation.Shared.Bloodsuckers.Systems;
 using Content.Shared.Body.Components;
 using Content.Shared.Body.Systems;
 using Content.Shared.Damage;
+using Content.Shared.Damage.Systems;
 using Content.Shared.Popups;
 using Robust.Shared.Audio.Systems;
 
 namespace Content.Goobstation.Server.Bloodsuckers.Systems;
 
-public sealed class BloodsuckerMaterializeSystem : EntitySystem
+public sealed partial class BloodsuckerMaterializeSystem : EntitySystem
 {
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly SharedBloodstreamSystem _bloodstream = default!;
-    [Dependency] private readonly DamageableSystem _damageable = default!;
-    [Dependency] private readonly SharedTransformSystem _transform = default!;
-    [Dependency] private readonly BloodsuckerHumanitySystem _humanity = default!;
-    [Dependency] private readonly BloodsuckerClaimSystem _claim = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private SharedBloodstreamSystem _bloodstream = default!;
+    [Dependency] private DamageableSystem _damageable = default!;
+    [Dependency] private SharedTransformSystem _transform = default!;
+    [Dependency] private BloodsuckerHumanitySystem _humanity = default!;
+    [Dependency] private BloodsuckerClaimSystem _claim = default!;
 
     public override void Initialize()
     {

@@ -15,13 +15,13 @@ using Robust.Shared.Timing;
 
 namespace Content.Goobstation.Server.Bloodsuckers.Systems;
 
-public sealed class BloodsuckerMasqueradeSystem : SharedBloodsuckerMasqueradeSystem
+public sealed partial class BloodsuckerMasqueradeSystem : SharedBloodsuckerMasqueradeSystem
 {
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly SharedBloodstreamSystem _bloodstream = default!;
-    [Dependency] private readonly StatusEffectsSystem _status = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly DiseaseSystem _disease = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private SharedBloodstreamSystem _bloodstream = default!;
+    [Dependency] private StatusEffectsSystem _status = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private DiseaseSystem _disease = default!;
 
     public override void Update(float frameTime)
     {

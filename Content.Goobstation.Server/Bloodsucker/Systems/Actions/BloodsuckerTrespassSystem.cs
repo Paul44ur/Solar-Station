@@ -8,11 +8,11 @@ using Robust.Shared.Audio.Systems;
 
 namespace Content.Goobstation.Server.Bloodsuckers.Systems;
 
-public sealed class BloodsuckerTrespassSystem : EntitySystem
+public sealed partial class BloodsuckerTrespassSystem : EntitySystem
 {
-    [Dependency] private readonly PolymorphSystem _polymorph = default!;
-    [Dependency] private readonly BloodsuckerHumanitySystem _humanity = default!;
-    [Dependency] private readonly AudioSystem _audio = default!;
+    [Dependency] private PolymorphSystem _polymorph = default!;
+    [Dependency] private BloodsuckerHumanitySystem _humanity = default!;
+    [Dependency] private AudioSystem _audio = default!;
 
     public override void Initialize()
     {

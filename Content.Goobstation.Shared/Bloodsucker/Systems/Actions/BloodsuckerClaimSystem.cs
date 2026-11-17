@@ -8,12 +8,12 @@ using Robust.Shared.Serialization;
 
 namespace Content.Goobstation.Shared.Bloodsuckers.Systems;
 
-public sealed class BloodsuckerClaimSystem : EntitySystem
+public sealed partial class BloodsuckerClaimSystem : EntitySystem
 {
-    [Dependency] private readonly SharedDoAfterSystem _doAfter = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly BloodsuckerHumanitySystem _humanity = default!;
+    [Dependency] private SharedDoAfterSystem _doAfter = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private BloodsuckerHumanitySystem _humanity = default!;
 
     public override void Initialize()
     {

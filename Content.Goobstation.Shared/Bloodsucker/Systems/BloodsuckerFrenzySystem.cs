@@ -5,6 +5,8 @@ using Content.Goobstation.Shared.Bloodsuckers.Events;
 using Content.Shared.Body.Components;
 using Content.Shared.Body.Systems;
 using Content.Shared.Damage;
+using Content.Shared.Damage.Components;
+using Content.Shared.Damage.Systems;
 using Content.Shared.Damage.Prototypes;
 using Content.Shared.Speech.Muting;
 using Robust.Shared.Prototypes;
@@ -14,11 +16,11 @@ namespace Content.Goobstation.Shared.Bloodsuckers.Systems;
 /// <summary>
 /// Monitors the vampire's blood volume.
 /// </summary>
-public sealed class BloodsuckerFrenzySystem : EntitySystem
+public sealed partial class BloodsuckerFrenzySystem : EntitySystem
 {
-    [Dependency] private readonly DamageableSystem _damageable = default!;
-    [Dependency] private readonly BloodsuckerHumanitySystem _humanity = default!;
-    [Dependency] private readonly SharedBloodstreamSystem _bloodstream = default!;
+    [Dependency] private DamageableSystem _damageable = default!;
+    [Dependency] private BloodsuckerHumanitySystem _humanity = default!;
+    [Dependency] private SharedBloodstreamSystem _bloodstream = default!;
 
     private static readonly ProtoId<DamageTypePrototype> BurnDamageType = "Heat";
 

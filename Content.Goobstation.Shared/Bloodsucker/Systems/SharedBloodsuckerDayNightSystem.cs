@@ -21,9 +21,9 @@ public record struct BloodsuckerNightStartedEvent;
 [ByRefEvent]
 public record struct BloodsuckerDayWarningEvent(float SecondsRemaining);
 
-public abstract class SharedBloodsuckerDayNightSystem : EntitySystem
+public abstract partial class SharedBloodsuckerDayNightSystem : EntitySystem
 {
-    [Dependency] private readonly IRobustRandom _random = default!;
+    [Dependency] private IRobustRandom _random = default!;
 
     public override void Initialize()
     {

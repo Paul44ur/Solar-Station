@@ -2,6 +2,7 @@ using Content.Goobstation.Shared.Bloodsuckers.Components;
 using Content.Goobstation.Shared.Bloodsuckers.Events;
 using Content.Shared.Bed.Sleep;
 using Content.Shared.Damage;
+using Content.Shared.Damage.Systems;
 using Content.Shared.Examine;
 using Content.Shared.Flash;
 using Content.Shared.Mobs;
@@ -15,11 +16,11 @@ namespace Content.Goobstation.Shared.Bloodsuckers.Systems;
 /// <summary>
 /// Handles all passive effects of the Bloodsucker antagonist.
 /// </summary>
-public sealed class BloodsuckerSystem : EntitySystem
+public sealed partial class BloodsuckerSystem : EntitySystem
 {
-    [Dependency] private readonly MobStateSystem _mobState = default!;
-    [Dependency] private readonly StatusEffectsSystem _statusEffects = default!;
-    [Dependency] private readonly AlertsSystem _alerts = default!;
+    [Dependency] private MobStateSystem _mobState = default!;
+    [Dependency] private StatusEffectsSystem _statusEffects = default!;
+    [Dependency] private AlertsSystem _alerts = default!;
 
     public override void Initialize()
     {

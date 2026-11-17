@@ -9,12 +9,12 @@ using Robust.Shared.Timing;
 
 namespace Content.Goobstation.Shared.Bloodsuckers.Systems;
 
-public abstract class SharedBloodsuckerMasqueradeSystem : EntitySystem
+public abstract partial class SharedBloodsuckerMasqueradeSystem : EntitySystem
 {
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly BloodsuckerHumanitySystem _humanity = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private BloodsuckerHumanitySystem _humanity = default!;
+    [Dependency] private IGameTiming _timing = default!;
 
     private EntityQuery<MobStateComponent> _mobStateQuery;
 

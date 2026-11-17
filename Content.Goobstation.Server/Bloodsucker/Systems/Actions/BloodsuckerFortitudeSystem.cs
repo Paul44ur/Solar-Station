@@ -4,6 +4,7 @@ using Content.Goobstation.Shared.Bloodsuckers.Systems;
 using Content.Shared.Body.Components;
 using Content.Shared.Body.Systems;
 using Content.Shared.Damage;
+using Content.Shared.Damage.Systems;
 using Content.Shared.Damage.Prototypes;
 using Content.Shared.Movement.Components;
 using Robust.Shared.Prototypes;
@@ -11,11 +12,11 @@ using Robust.Shared.Timing;
 
 namespace Content.Goobstation.Server.Bloodsuckers.Systems;
 
-public sealed class BloodsuckerFortitudeSystem : SharedBloodsuckerFortitudeSystem
+public sealed partial class BloodsuckerFortitudeSystem : SharedBloodsuckerFortitudeSystem
 {
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly SharedBloodstreamSystem _bloodstream = default!;
-    [Dependency] private readonly DamageableSystem _damageable = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private SharedBloodstreamSystem _bloodstream = default!;
+    [Dependency] private DamageableSystem _damageable = default!;
 
     public override void Update(float frameTime)
     {

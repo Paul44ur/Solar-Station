@@ -5,10 +5,10 @@ using Robust.Shared.Player;
 
 namespace Content.Goobstation.Client.Bloodsucker.Systems;
 
-public sealed class BloodsuckerOlfactionClientSystem : EntitySystem
+public sealed partial class BloodsuckerOlfactionClientSystem : EntitySystem
 {
-    [Dependency] private readonly IOverlayManager _overlayMan = default!;
-    [Dependency] private readonly ISharedPlayerManager _player = default!;
+    [Dependency] private IOverlayManager _overlayMan = default!;
+    [Dependency] private ISharedPlayerManager _player = default!;
 
     private BloodsuckerOlfactionOverlay _overlay = default!;
 

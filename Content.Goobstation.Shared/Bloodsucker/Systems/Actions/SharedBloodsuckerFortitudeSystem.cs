@@ -2,6 +2,8 @@ using Content.Goobstation.Shared.Bloodsuckers.Components;
 using Content.Goobstation.Shared.Bloodsuckers.Components.Actions;
 using Content.Goobstation.Shared.Bloodsuckers.Events;
 using Content.Shared.Damage;
+using Content.Shared.Damage.Components;
+using Content.Shared.Damage.Systems;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Movement.Components;
@@ -14,14 +16,14 @@ using System.Net.NetworkInformation;
 
 namespace Content.Goobstation.Shared.Bloodsuckers.Systems;
 
-public abstract class SharedBloodsuckerFortitudeSystem : EntitySystem
+public abstract partial class SharedBloodsuckerFortitudeSystem : EntitySystem
 {
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly BloodsuckerHumanitySystem _humanity = default!;
-    [Dependency] private readonly DamageableSystem _damageable = default!;
-    [Dependency] private readonly StatusEffectsSystem _status = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private BloodsuckerHumanitySystem _humanity = default!;
+    [Dependency] private DamageableSystem _damageable = default!;
+    [Dependency] private StatusEffectsSystem _status = default!;
+    [Dependency] private IGameTiming _timing = default!;
 
     private EntityQuery<MobStateComponent> _mobStateQuery;
 
@@ -69,7 +71,7 @@ public abstract class SharedBloodsuckerFortitudeSystem : EntitySystem
         if (TryComp(ent.Owner, out DamageableComponent? damageable))
         {
             ent.Comp.PreviousModifierSetId = damageable.DamageModifierSetId;
-            _damageable.SetDamageModifierSetId(ent.Owner, modifierSetId, damageable);
+            _damageable.SetDamageModifierSetId((ent.Owner, damageable), modifierSetId);
         }
 
         // Stun immunity at level 2+
@@ -90,7 +92,7 @@ public abstract class SharedBloodsuckerFortitudeSystem : EntitySystem
 
         // Restore previous modifier set
         if (TryComp(ent.Owner, out DamageableComponent? damageable))
-            _damageable.SetDamageModifierSetId(ent.Owner, ent.Comp.PreviousModifierSetId, damageable);
+            _damageable.SetDamageModifierSetId((ent.Owner, damageable), ent.Comp.PreviousModifierSetId);
 
         ent.Comp.PreviousModifierSetId = null;
 

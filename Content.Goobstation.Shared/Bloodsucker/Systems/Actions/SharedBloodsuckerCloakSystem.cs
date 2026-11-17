@@ -12,13 +12,13 @@ using Content.Goobstation.Shared.Overlays;
 
 namespace Content.Goobstation.Shared.Bloodsuckers.Systems;
 
-public abstract class SharedBloodsuckerCloakSystem : EntitySystem
+public abstract partial class SharedBloodsuckerCloakSystem : EntitySystem
 {
-    [Dependency] private readonly SharedStealthSystem _stealth = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly BloodsuckerHumanitySystem _humanity = default!;
-    [Dependency] private readonly EntityLookupSystem _lookup = default!;
+    [Dependency] private SharedStealthSystem _stealth = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private BloodsuckerHumanitySystem _humanity = default!;
+    [Dependency] private EntityLookupSystem _lookup = default!;
 
     private EntityQuery<MobStateComponent> _mobStateQuery;
 

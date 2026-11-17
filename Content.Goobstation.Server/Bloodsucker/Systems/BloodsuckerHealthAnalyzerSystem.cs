@@ -5,9 +5,9 @@ using Content.Shared.Popups;
 
 namespace Content.Goobstation.Server.Bloodsuckers.Systems;
 
-public sealed class BloodsuckerHealthAnalyzerSystem : EntitySystem
+public sealed partial class BloodsuckerHealthAnalyzerSystem : EntitySystem
 {
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
 
     public override void Initialize()
     {

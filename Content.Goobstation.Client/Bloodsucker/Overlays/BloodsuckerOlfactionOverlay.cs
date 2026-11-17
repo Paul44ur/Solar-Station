@@ -10,10 +10,10 @@ using System.Numerics;
 
 namespace Content.Goobstation.Client.Bloodsucker.Overlays;
 
-public sealed class BloodsuckerOlfactionOverlay : Overlay
+public sealed partial class BloodsuckerOlfactionOverlay : Overlay
 {
-    [Dependency] private readonly IEntityManager _entity = default!;
-    [Dependency] private readonly IPlayerManager _player = default!;
+    [Dependency] private IEntityManager _entity = default!;
+    [Dependency] private IPlayerManager _player = default!;
     private readonly SharedTransformSystem _transform;
     private readonly SpriteSystem _sprite;
 
