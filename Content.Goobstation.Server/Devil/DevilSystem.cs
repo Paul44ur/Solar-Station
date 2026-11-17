@@ -185,6 +185,11 @@ public sealed partial class DevilSystem : EntitySystem
         devil.Comp.Souls += args.Amount;
         _popup.PopupEntity(Loc.GetString("contract-soul-added"), args.User, args.User, PopupType.MediumCaution);
 
+        // Solar: this counter was never increased, so the Archdevil unlock could never happen.
+        var lesserBefore = devil.Comp.SoulsWhileLesser;
+        if (HasComp<Content.Goobstation.Shared.Devil.Components.DevilLesserFormComponent>(devil))
+            devil.Comp.SoulsWhileLesser += args.Amount;
+
         if (_prototype.TryIndex(devil.Comp.DevilBranchPrototype, out var proto))
         {
             foreach (var unlock in proto.ConditionalUnlocks)
@@ -195,7 +200,9 @@ public sealed partial class DevilSystem : EntitySystem
                 if (!EntityManager.HasComponent(devil, unlock.RequiredComponentType))
                     continue;
 
-                if (devil.Comp.SoulsWhileLesser < unlock.SoulsRequired)
+                // Only grant once, on the soul that crosses the threshold.
+                if (devil.Comp.SoulsWhileLesser < unlock.SoulsRequired
+                    || lesserBefore >= unlock.SoulsRequired)
                     continue;
 
                 foreach (var action in unlock.Actions)

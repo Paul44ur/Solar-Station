@@ -9,6 +9,6 @@
     - "ActionPolymorphLesserDevil"
   conditionalUnlocks:
   - requiredComponent: DevilLesserForm
-    soulsRequired: 4
+    soulsRequired: 6 # Solar: 6 souls to reach lesser form + 6 more = 12 for Archdevil
     actions:
     - ActionPolymorphArchDevil
