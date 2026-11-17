@@ -18,7 +18,7 @@ public sealed partial class InfernalAuraComponent : Component
     public DamageSpecifier Damage = new() { DamageDict = { ["Heat"] = 2 } };
 
     [DataField]
-    public float Range = 3f;
+    public float Range = 4f;
 
     [DataField]
     public TimeSpan Delay = TimeSpan.FromSeconds(1);
@@ -32,3 +32,9 @@ public sealed partial class InfernalAuraComponent : Component
 /// </summary>
 [RegisterComponent]
 public sealed partial class DevilMinionComponent : Component;
+
+/// <summary>
+/// Solar: this body's soul was harvested by an Archdevil. Only an empty shell remains.
+/// </summary>
+[RegisterComponent]
+public sealed partial class SoulHarvestedComponent : Component;

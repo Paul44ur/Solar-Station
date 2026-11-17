@@ -331,3 +331,44 @@
       state: archfire
   - type: InstantAction
     event: !type:DevilToggleInfernalAuraEvent {}
+
+# Solar
+- type: entity
+  parent: BaseAction
+  id: ActionDevilSoulHarvest
+  name: Soul harvest
+  description: Collect a soul that already belongs to you. The mortal dies on the spot, and nothing will ever bring them back.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Action
+    useDelay: 20
+    itemIconStyle: NoItem
+    icon:
+      sprite: _Goobstation/Actions/devil.rsi
+      state: heart-broken
+  - type: TargetAction
+    range: 1.5
+    interactOnMiss: false
+  - type: EntityTargetAction
+    canTargetSelf: false
+    whitelist:
+      components:
+      - MobState
+    event: !type:DevilSoulHarvestEvent {}
+
+# Solar
+- type: entity
+  parent: BaseAction
+  id: ActionDevilSummonImps
+  name: Summon imps
+  description: Tear open the floor and call two imps up from below to serve you.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Action
+    useDelay: 300
+    itemIconStyle: NoItem
+    icon:
+      sprite: _Goobstation/Actions/devil.rsi
+      state: pitchfork
+  - type: InstantAction
+    event: !type:DevilSummonImpsEvent {}

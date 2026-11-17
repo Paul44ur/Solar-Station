@@ -102,6 +102,7 @@ public sealed partial class DevilTransformSystem : EntitySystem
 
             // Solar: lesser form gets Voice of Hell.
             _actions.AddAction(newEntity, "ActionDevilVoiceOfHell");
+            _actions.AddAction(newEntity, "ActionDevilSummonImps");
         }
         else
         {
@@ -120,6 +121,7 @@ public sealed partial class DevilTransformSystem : EntitySystem
             // Solar: infernal aura and its toggle.
             EnsureComp<InfernalAuraComponent>(newEntity);
             _actions.AddAction(newEntity, "ActionDevilHellsSevenRings");
+            _actions.AddAction(newEntity, "ActionDevilSoulHarvest");
         }
 
         Del(uid);

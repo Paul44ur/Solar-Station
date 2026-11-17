@@ -282,7 +282,9 @@ public sealed partial class DevilSystem : EntitySystem
     private void OnListen(Entity<DevilComponent> devil, ref ListenEvent args)
     {
         // Other Devils and entities without souls have no authority over you.
-        if (HasComp<DevilComponent>(args.Source)
+        // Solar: an Archdevil has shed its name entirely, so it no longer has power over it.
+        if (HasComp<Content.Goobstation.Shared.Devil.Components.ArchdevilComponent>(devil)
+        || HasComp<DevilComponent>(args.Source)
         || HasComp<CondemnedComponent>(args.Source)
         || HasComp<SiliconComponent>(args.Source)
         || args.Source == devil.Owner)
@@ -302,12 +304,9 @@ public sealed partial class DevilSystem : EntitySystem
 
         devil.Comp.LastTriggeredTime = _timing.CurTime;
 
-        // Solar: the Archdevil's true name cuts deeper.
-        var archMultiplier = HasComp<Content.Goobstation.Shared.Devil.Components.ArchdevilComponent>(devil) ? 2f : 1f;
-
         if (HasComp<BibleUserComponent>(args.Source))
         {
-            _damageable.TryChangeDamage(devil.Owner, devil.Comp.DamageOnTrueName * devil.Comp.BibleUserDamageMultiplier * archMultiplier, true);
+            _damageable.TryChangeDamage(devil.Owner, devil.Comp.DamageOnTrueName * devil.Comp.BibleUserDamageMultiplier, true);
             _stun.TryAddStunDuration(devil, devil.Comp.ParalyzeDurationOnTrueName * devil.Comp.BibleUserDamageMultiplier);
 
             var popup = Loc.GetString("devil-true-name-heard-chaplain", ("speaker", args.Source), ("target", devil));
@@ -316,7 +315,7 @@ public sealed partial class DevilSystem : EntitySystem
         else
         {
             _stun.TryAddStunDuration(devil, devil.Comp.ParalyzeDurationOnTrueName);
-            _damageable.TryChangeDamage(devil.Owner, devil.Comp.DamageOnTrueName * archMultiplier, true);
+            _damageable.TryChangeDamage(devil.Owner, devil.Comp.DamageOnTrueName, true);
 
             var popup = Loc.GetString("devil-true-name-heard", ("speaker", args.Source), ("target", devil));
             _popup.PopupEntity(popup, devil, PopupType.LargeCaution);

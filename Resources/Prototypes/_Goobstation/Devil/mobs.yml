@@ -208,3 +208,67 @@
       - !type:GibBehavior
         recursive: true
 
+
+# Solar: weak minion summoned by a lesser devil. Uses the true devil sprite, shrunk and darkened, until it gets art of its own.
+- type: entity
+  name: imp
+  id: MobDevilImp
+  parent: [ SimpleSpaceMobBase, MobCombat ]
+  description: A small, cackling creature from below.
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    sprite: _Goobstation/Devil/32x64.rsi
+    scale: 0.6, 0.6
+    color: "#b84040"
+    layers:
+    - map: [ "enum.DamageStateVisualLayers.Base" ]
+      state: true_devil
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: true_devil
+      Dead:
+        Base: true_devil
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      60: Dead
+  - type: MeleeWeapon
+    altDisarm: false
+    angle: 0
+    animation: WeaponArcClaw
+    soundHit:
+      path: /Audio/Effects/demon_attack1.ogg
+    damage:
+      types:
+        Slash: 5
+        Heat: 2
+  - type: MovementSpeedModifier
+    baseWalkSpeed: 3.5
+    baseSprintSpeed: 5
+  - type: Damageable
+    damageContainer: Biological
+    damageModifierSet: ManifestedSpirit
+  - type: DevilMinion
+  - type: UniversalLanguageSpeaker
+  - type: Puller
+    needsHands: false
+  - type: ReplacementAccent
+    accent: genericAggressive
+  - type: Tag
+    tags:
+    - CannotSuicide
+    - DoorBumpOpener
+  - type: GhostRole
+    allowMovement: true
+    allowSpeech: true
+    makeSentient: true
+    name: ghost-role-information-devil-imp-name
+    description: ghost-role-information-devil-imp-description
+    rules: ghost-role-information-devil-imp-rules
+    mindRoles:
+    - MindRoleGhostRoleFamiliar
+    raffle:
+      settings: short
+  - type: GhostTakeoverAvailable

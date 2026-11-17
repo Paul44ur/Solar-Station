@@ -119,6 +119,7 @@ public sealed partial class DevilRuleSystem : GameRuleSystem<DevilRuleComponent>
             _chat.DispatchStationAnnouncement(
                 uid,
                 Loc.GetString("devil-ascension-announcement", ("trueName", devil.TrueName)),
+                sender: Loc.GetString("devil-ascension-announcement-sender"), // Solar
                 colorOverride: Color.DarkRed,
                 announcementSound: rule.AscensionSound
             );

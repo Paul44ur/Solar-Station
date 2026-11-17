@@ -34,6 +34,7 @@ public sealed partial class DevilSystem
         SubscribeLocalEvent<DevilComponent, DevilGripEvent>(OnDevilGrip);
         SubscribeLocalEvent<DevilComponent, DevilPossessionEvent>(OnPossess);
         SubscribeLocalEvent<DevilComponent, DevilVoiceOfHellEvent>(OnVoiceOfHell);
+        SubscribeLocalEvent<DevilComponent, DevilSummonImpsEvent>(OnSummonImps);
     }
 
     private void OnContractCreated(Entity<DevilComponent> devil, ref CreateContractEvent args)
@@ -114,6 +115,23 @@ public sealed partial class DevilSystem
         devil.Comp.DevilGrip = args.Action.Owner;
     }
 
+
+    // Solar: lesser form calls imps up from below. Ghosts can take them over.
+    private void OnSummonImps(Entity<DevilComponent> devil, ref DevilSummonImpsEvent args)
+    {
+        if (!TryUseAbility(args))
+            return;
+
+        var coords = Transform(devil).Coordinates;
+        for (var i = 0; i < args.Amount; i++)
+        {
+            Spawn(devil.Comp.PentagramEffectProto, coords);
+            Spawn(args.ImpPrototype, coords);
+        }
+
+        PlayFwooshSound(devil);
+        _popup.PopupEntity(Loc.GetString("devil-summon-imps"), devil, PopupType.MediumCaution);
+    }
 
     // Solar: Voice of Hell. Chaplains are protected by their faith.
     private void OnVoiceOfHell(Entity<DevilComponent> devil, ref DevilVoiceOfHellEvent args)
