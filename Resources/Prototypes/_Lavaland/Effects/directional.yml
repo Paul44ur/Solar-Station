@@ -12,7 +12,6 @@
     speed: 20
   - type: TimedDespawn
     lifetime: 3
-  - type: Timer
   - type: TimedSpawner
     prototypes:
       - WarningVerticalSpawner
@@ -40,7 +39,6 @@
     speed: 20
   - type: TimedDespawn
     lifetime: 3
-  - type: Timer
   - type: TimedSpawner
     prototypes:
       - WarningVerticalSpawner
@@ -68,7 +66,6 @@
     speed: 20
   - type: TimedDespawn
     lifetime: 3
-  - type: Timer
   - type: TimedSpawner
     prototypes:
       - WarningHorizontalSpawner
@@ -96,7 +93,6 @@
     speed: 20
   - type: TimedDespawn
     lifetime: 3
-  - type: Timer
   - type: TimedSpawner
     prototypes:
       - WarningHorizontalSpawner

@@ -38,7 +38,6 @@
     energy: 2
     color: Green
     castShadows: false
-  - type: Timer
   - type: TimedSpawner
     prototypes:
       - DarkMatterPlanktonExplode
