@@ -7,7 +7,7 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Goobstation.Server.Devil.GameTicking.Rules;
 
-[RegisterComponent, Access(typeof(DevilRuleSystem))]
+[RegisterComponent, Access(typeof(DevilRuleSystem), typeof(Contract.DevilContractSystem))] // Solar: the contract system writes the deal ledger
 public sealed partial class DevilRuleComponent : Component
 {
     [DataField]
@@ -30,4 +30,24 @@ public sealed partial class DevilRuleComponent : Component
 
     [DataField]
     public SoundPathSpecifier AscensionSound = new("/Audio/_Goobstation/Devil/demonchant3.ogg");
+
+    /// <summary>
+    /// Solar: every deal closed this round, shown on the round end screen.
+    /// </summary>
+    [ViewVariables]
+    public List<DevilDealRecord> Deals = new();
+}
+
+/// <summary>
+/// Solar: one signed devil contract, for the round end deal ledger.
+/// </summary>
+public sealed class DevilDealRecord
+{
+    public EntityUid Contract;
+    public string Devil = string.Empty;
+    public string Signer = string.Empty;
+    public EntityUid SignerEntity;
+    public List<string> Clauses = new();
+    public List<string> Voided = new();
+    public bool Harvested;
 }

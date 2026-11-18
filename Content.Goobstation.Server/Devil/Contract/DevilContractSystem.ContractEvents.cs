@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using Content.Goobstation.Shared.Devil;
+using Content.Goobstation.Shared.Devil.Contract;
 using Content.Goobstation.Shared.Devil.Components;
 using Content.Server.Body.Components;
 using Content.Shared._Shitmed.Body.Events;
@@ -149,6 +150,21 @@ public sealed partial class DevilContractSystem
     // LETS GO GAMBLING!!!!!
     private void OnChance(DevilContractChanceEvent args)
     {
-        AddRandomClause(args.Target);
+        // Solar: roll the random clause as part of this contract, so clauses that need the devil
+        // (Soul Ownership and the tithes) know who it is. Chance can't roll itself.
+        var clauses = _prototypeManager.EnumeratePrototypes<DevilClausePrototype>()
+            .Where(c => c.Event is not DevilContractChanceEvent)
+            .ToList();
+
+        if (clauses.Count == 0)
+            return;
+
+        Entity<DevilContractComponent>? contract = args.Contract is { } comp && args.ContractUid is { } uid
+            ? new Entity<DevilContractComponent>(uid, comp)
+            : null;
+
+        var selected = _random.Pick(clauses);
+        ApplyEffectToTarget(args.Target, selected, contract);
+        _sawmill.Debug($"Chance rolled {selected.ID} for {ToPrettyString(args.Target)}");
     }
 }

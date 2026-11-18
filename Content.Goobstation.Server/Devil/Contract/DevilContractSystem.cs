@@ -9,6 +9,7 @@ using Content.Goobstation.Server.Possession;
 using Content.Goobstation.Shared.Devil;
 using Content.Goobstation.Shared.Devil.Condemned;
 using Content.Goobstation.Shared.Devil.Contract;
+using Content.Goobstation.Shared.Devil.UI;
 using Content.Shared._Imp.Drone; // Goob - Moved to shared
 using Content.Server.Body.Systems;
 using Content.Server.Explosion.EntitySystems;
@@ -50,6 +51,9 @@ public sealed partial class DevilContractSystem : EntitySystem
     [Dependency] private PolymorphSystem _polymorph = null!;
     [Dependency] private ExplosionSystem _explosion = null!;
     [Dependency] private MindSystem _mind = null!;
+    [Dependency] private SharedUserInterfaceSystem _ui = null!;
+    [Dependency] private PaperSystem _paper = null!;
+    [Dependency] private Content.Shared.Roles.Jobs.SharedJobSystem _jobs = null!;
 
     private ISawmill _sawmill = null!;
 
@@ -58,12 +62,15 @@ public sealed partial class DevilContractSystem : EntitySystem
         base.Initialize();
         InitializeRegex();
         InitializeSpecialActions();
+        InitializeMassContract(); // Solar
+        InitializeLoophole(); // Solar
 
         SubscribeLocalEvent<DevilContractComponent, BeingSignedAttemptEvent>(OnContractSignAttempt);
         SubscribeLocalEvent<DevilContractComponent, ExaminedEvent>(OnExamined);
         SubscribeLocalEvent<DevilContractComponent, GetVerbsEvent<AlternativeVerb>>(OnGetVerbs);
         SubscribeLocalEvent<DevilContractComponent, SignSuccessfulEvent>(OnSignStep);
         SubscribeLocalEvent<DevilContractComponent, FullyEatenEvent>(OnEaten);
+        SubscribeLocalEvent<DevilContractComponent, DevilContractClausesChosenMessage>(OnClausesChosen);
 
         _sawmill = Logger.GetSawmill("devil-contract");
     }
@@ -103,6 +110,82 @@ public sealed partial class DevilContractSystem : EntitySystem
         };
 
         args.Verbs.Add(burnVerb);
+
+        // Solar: reopen the clause menu if it was closed before choosing.
+        if (contract.Comp.ClausesChosen
+            || contract.Comp.IsVictimSigned
+            || user != contract.Comp.ContractOwner)
+            return;
+
+        AlternativeVerb chooseVerb = new()
+        {
+            Act = () => _ui.OpenUi(contract.Owner, DevilContractUiKey.Key, user),
+            Text = Loc.GetString("devil-contract-choose-clauses-verb"),
+            Icon = new SpriteSpecifier.Rsi(new("_Goobstation/Actions/devil.rsi"), "summon-contract"),
+            Priority = 2,
+        };
+
+        args.Verbs.Add(chooseVerb);
+    }
+
+    /// <summary>
+    /// Solar: opens the clause menu for the devil who just summoned this contract.
+    /// </summary>
+    public void OpenClauseMenu(EntityUid contract, EntityUid devil)
+    {
+        _ui.OpenUi(contract, DevilContractUiKey.Key, devil);
+    }
+
+    private void OnClausesChosen(Entity<DevilContractComponent> contract, ref DevilContractClausesChosenMessage args)
+    {
+        var user = args.Actor;
+        if (contract.Comp.ClausesChosen
+            || contract.Comp.IsVictimSigned
+            || user != contract.Comp.ContractOwner
+            || !TryComp<PaperComponent>(contract, out var paper))
+            return;
+
+        var chosen = new List<string>();
+        var weight = 0;
+        foreach (var id in args.Clauses)
+        {
+            if (chosen.Contains(id) || !_prototypeManager.TryIndex(id, out DevilClausePrototype? clause))
+                continue;
+
+            chosen.Add(id);
+            weight += clause.ClauseWeight;
+        }
+
+        if (weight < 0)
+        {
+            _popupSystem.PopupEntity(Loc.GetString("contract-uneven-odds", ("number", Math.Abs(weight))), contract, user, PopupType.MediumCaution);
+            return;
+        }
+
+        _ui.CloseUi(contract.Owner, DevilContractUiKey.Key);
+
+        // Solar: a mass contract template is handed out to everyone nearby instead.
+        if (HasComp<DevilMassContractTemplateComponent>(contract))
+        {
+            DistributeMassContract(contract, user, chosen, args.DamnedPrice);
+            return;
+        }
+
+        WriteClauses((contract.Owner, contract.Comp, paper), chosen);
+    }
+
+    /// <summary>
+    /// Solar: writes the clauses onto a contract, each with a line telling the mortal what it means.
+    /// </summary>
+    private void WriteClauses(Entity<DevilContractComponent, PaperComponent> contract, List<string> chosen)
+    {
+        var lines = chosen.Select(id => Loc.GetString("devil-contract-clause-line",
+            ("name", DevilClauseNames.GetName(id)),
+            ("desc", Loc.TryGetString($"devil-clause-contract-{id}", out var desc) ? desc : string.Empty)));
+
+        _paper.SetContent((contract.Owner, contract.Comp2), Loc.GetString("devil-contract-content-chosen", ("clauses", string.Join("\n", lines))));
+        contract.Comp1.ClausesChosen = true;
+        UpdateContractWeight((contract.Owner, contract.Comp1));
     }
 
     private void TryBurnContract(Entity<DevilContractComponent> contract, Entity<DevilComponent> devil)
@@ -227,17 +310,106 @@ public sealed partial class DevilContractSystem : EntitySystem
         if (_mind.TryGetMind(signer, out var mindId, out var mind) &&
             _mind.TryGetObjectiveComp<MeetContractWeightConditionComponent>(mindId, out var objectiveComp, mind))
             objectiveComp.ContractWeight += contract.Comp.ContractWeight;
+
+        // Solar: count the signer's department(s) toward "bargain with every department".
+        if (_mind.TryGetMind(signer, out var devilMind, out var devilMindComp)
+            && _mind.TryGetObjectiveComp<DevilDepartmentContractsConditionComponent>(devilMind, out var deptComp, devilMindComp)
+            && contract.Comp.Signer is { } victim
+            && _mind.TryGetMind(victim, out var victimMind, out _)
+            && _jobs.MindTryGetJobId(victimMind, out var jobId)
+            && jobId is { } job)
+        {
+            foreach (var department in _prototypeManager.EnumeratePrototypes<Content.Shared.Roles.DepartmentPrototype>())
+            {
+                if (department.Roles.Contains(job))
+                    deptComp.Signed.Add(department.ID);
+            }
+        }
     }
 
     private void HandleBothPartiesSigned(Entity<DevilContractComponent> contract)
     {
         UpdateContractWeight(contract);
         DoContractEffects(contract);
+        RecordDeal(contract); // Solar
+    }
+
+    /// <summary>
+    /// Solar: write the deal into the round end ledger.
+    /// </summary>
+    private void RecordDeal(Entity<DevilContractComponent> contract)
+    {
+        if (contract.Comp.Signer is not { } signer || contract.Comp.ContractOwner is not { } owner)
+            return;
+
+        var devilName = Name(owner);
+        if (TryComp<DevilComponent>(owner, out var devil) && !string.IsNullOrEmpty(devil.TrueName))
+            devilName = Loc.GetString("devil-ledger-devil-name", ("name", Name(owner)), ("trueName", devil.TrueName));
+
+        var record = new Content.Goobstation.Server.Devil.GameTicking.Rules.DevilDealRecord
+        {
+            Contract = contract.Owner,
+            Devil = devilName,
+            Signer = Name(signer),
+            SignerEntity = signer,
+            Clauses = contract.Comp.CurrentClauses.Select(c => DevilClauseNames.GetName(c.ID)).ToList(),
+        };
+
+        var rules = EntityQueryEnumerator<Content.Goobstation.Server.Devil.GameTicking.Rules.DevilRuleComponent>();
+        if (rules.MoveNext(out var rule))
+            rule.Deals.Add(record);
+    }
+
+    /// <summary>
+    /// Solar: look up a deal in the ledger by its contract.
+    /// </summary>
+    public Content.Goobstation.Server.Devil.GameTicking.Rules.DevilDealRecord? FindDeal(EntityUid contract)
+    {
+        var rules = EntityQueryEnumerator<Content.Goobstation.Server.Devil.GameTicking.Rules.DevilRuleComponent>();
+        while (rules.MoveNext(out var rule))
+        {
+            foreach (var deal in rule.Deals)
+            {
+                if (deal.Contract == contract)
+                    return deal;
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Solar: mark every deal this mortal signed as harvested.
+    /// </summary>
+    public void MarkHarvested(EntityUid signer)
+    {
+        var rules = EntityQueryEnumerator<Content.Goobstation.Server.Devil.GameTicking.Rules.DevilRuleComponent>();
+        while (rules.MoveNext(out var rule))
+        {
+            foreach (var deal in rule.Deals)
+            {
+                if (deal.SignerEntity == signer)
+                    deal.Harvested = true;
+            }
+        }
     }
 
     #endregion
 
     #region Helper Events
+
+    /// <summary>
+    /// Solar: things that have no soul to sell at all, regardless of any earlier deal.
+    /// </summary>
+    public bool HasNoSoul(EntityUid user)
+    {
+        return HasComp<SiliconComponent>(user)
+               || HasComp<DroneComponent>(user)
+               || HasComp<ChangelingComponent>(user)
+               || HasComp<BorgChassisComponent>(user)
+               || HasComp<SoullessComponent>(user)
+               || HasComp<PossessedComponent>(user);
+    }
 
     public bool IsUserValid(EntityUid user, out string failReason)
     {
@@ -252,12 +424,7 @@ public sealed partial class DevilContractSystem : EntitySystem
             return false;
         }
 
-        if (HasComp<MindShieldComponent>(user)
-            && !HasComp<DevilComponent>(user))
-        {
-            failReason = Loc.GetString("devil-contract-mind-shielded-failed");
-            return false;
-        }
+        // Solar: a mindshield doesn't protect you from a deal with hell itself, so mindshielded crew can sign.
 
         if (HasComp<PossessedComponent>(user))
         {
@@ -278,6 +445,14 @@ public sealed partial class DevilContractSystem : EntitySystem
             || HasComp<SoullessComponent>(contractee)
             || devil == contractee)
             return false;
+
+        // Solar: one soul per person, no matter how many deals or handshakes they make.
+        if (added > 0 && TryComp<DevilComponent>(devil, out var devilComp))
+        {
+            var source = _mind.TryGetMind(contractee, out var mindId, out _) ? mindId : contractee;
+            if (!devilComp.SoulSources.Add(source))
+                return false;
+        }
 
         var ev = new SoulAmountChangedEvent(devil, contractee, added);
         RaiseLocalEvent(devil, ref ev);
@@ -478,8 +653,10 @@ public sealed partial class DevilContractSystem : EntitySystem
         var ev = clause.Event;
         ev.Target = target;
 
-        if (contract is not null)
-            ev.Contract = contract;
+        // Solar: clause events are shared prototype instances, so always overwrite (or clear) the contract,
+        // otherwise a clause applied without a contract would act on the last contract that used it.
+        ev.Contract = contract?.Comp;
+        ev.ContractUid = contract?.Owner;
 
         // you gotta cast this shit to object, don't ask me vro idk either
         RaiseLocalEvent(target, (object)ev, true);

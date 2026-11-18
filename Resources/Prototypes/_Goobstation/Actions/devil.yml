@@ -290,3 +290,102 @@
     event: !type:ProjectileSpellEvent
       prototype: ProjectileHellfireArch
       speed: 12
+
+# Solar
+- type: entity
+  parent: BaseAction
+  id: ActionDevilVoiceOfHell
+  name: Voice of hell
+  description: Takes their ability to speak by subjecting the victim to a fraction of hell's might.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Action
+    useDelay: 45
+    itemIconStyle: NoItem
+    icon:
+      sprite: _Solar/Devil/actions.rsi # placeholder, see ART_NEEDED.md
+      state: voice-of-hell
+  - type: TargetAction
+    range: 7
+    interactOnMiss: false
+  - type: EntityTargetAction
+    canTargetSelf: false
+    whitelist:
+      components:
+      - MobState
+    event: !type:DevilVoiceOfHellEvent {}
+
+# Solar
+- type: entity
+  parent: BaseAction
+  id: ActionDevilHellsSevenRings
+  name: Hell's Seven Rings
+  description: Kindle or smother the rings of hellfire around you. While they burn, every mortal near you burns with them.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Action
+    useDelay: 3
+    itemIconStyle: NoItem
+    icon:
+      sprite: _Solar/Devil/actions.rsi # placeholder, see ART_NEEDED.md
+      state: hells-seven-rings
+  - type: InstantAction
+    event: !type:DevilToggleInfernalAuraEvent {}
+
+# Solar
+- type: entity
+  parent: BaseAction
+  id: ActionDevilSoulHarvest
+  name: Soul harvest
+  description: Collect a soul that already belongs to you. The mortal dies on the spot, and nothing will ever bring them back.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Action
+    useDelay: 20
+    itemIconStyle: NoItem
+    icon:
+      sprite: _Solar/Devil/actions.rsi # placeholder, see ART_NEEDED.md
+      state: soul-harvest
+  - type: TargetAction
+    range: 1.5
+    interactOnMiss: false
+  - type: EntityTargetAction
+    canTargetSelf: false
+    whitelist:
+      components:
+      - MobState
+    event: !type:DevilSoulHarvestEvent {}
+
+# Solar
+- type: entity
+  parent: BaseAction
+  id: ActionDevilSummonImps
+  name: Summon imps
+  description: Tear open the floor and call two imps up from below to serve you.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Action
+    useDelay: 300
+    itemIconStyle: NoItem
+    icon:
+      sprite: _Solar/Devil/actions.rsi # placeholder, see ART_NEEDED.md
+      state: summon-imps
+  - type: InstantAction
+    event: !type:DevilSummonImpsEvent {}
+
+# Solar
+- type: entity
+  parent: BaseAction
+  id: ActionDevilMassContract
+  name: Mass contract
+  description: Write one contract, and offer it to every mortal within seven tiles at once. Those who refuse are burned. Those who hesitate are spared.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Action
+    useDelay: 360
+    itemIconStyle: NoItem
+    icon:
+      sprite: _Solar/Devil/actions.rsi # placeholder, see ART_NEEDED.md
+      state: mass-contract
+  - type: InstantAction
+    event: !type:DevilMassContractEvent {}

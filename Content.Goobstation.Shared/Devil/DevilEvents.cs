@@ -46,6 +46,11 @@ public abstract partial class BaseDevilContractEvent : EntityEventArgs
     public DevilContractComponent? Contract;
 
     /// <summary>
+    /// Solar: the contract entity, for clauses that apply further clauses from the same contract.
+    /// </summary>
+    public EntityUid? ContractUid;
+
+    /// <summary>
     /// The target affected by this contract.
     /// </summary>
     public EntityUid Target;
@@ -68,5 +73,33 @@ public sealed partial class DevilContractLoseOrganEvent : BaseDevilContractEvent
 
 [DataDefinition, Serializable]
 public sealed partial class DevilContractChanceEvent : BaseDevilContractEvent;
+
+// Solar: devil-side tithe clauses. The mortal pays, the devil gains.
+[DataDefinition, Serializable]
+public sealed partial class DevilContractLifeForceEvent : BaseDevilContractEvent
+{
+    [DataField]
+    public int Amount = 15;
+}
+
+[DataDefinition, Serializable]
+public sealed partial class DevilContractSwiftnessEvent : BaseDevilContractEvent
+{
+    [DataField]
+    public float TargetMultiplier = 0.9f;
+
+    [DataField]
+    public float DevilBonus = 0.05f;
+}
+
+[DataDefinition, Serializable]
+public sealed partial class DevilContractMightEvent : BaseDevilContractEvent
+{
+    [DataField]
+    public float TargetMultiplier = 0.8f;
+
+    [DataField]
+    public float DevilBonus = 0.1f;
+}
 
 public sealed class DevilAscendedEvent : EntityEventArgs;

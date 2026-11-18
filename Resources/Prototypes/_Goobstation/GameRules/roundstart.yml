@@ -419,8 +419,8 @@
     minPlayers: 15
   - type: AntagObjectives
     objectives:
-    - DevilContractObjective
-    - DevilWeightObjective
+    - DevilSoulsObjective # Solar: replaces the fixed soul and contract weight goals
+    - DevilDepartmentObjective # Solar
   - type: AntagSelection
     selectionTime: IntraPlayerSpawn
     agentName: devil-roundend-name

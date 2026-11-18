@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "license": "CC-BY-SA-3.0",
+  "copyright": "PLACEHOLDER: copy of the true devil sprite from https://github.com/austation/austation/blob/71d8e7406d84f8ec8cb79bf153b050e7e09d2a17/icons/mob/32x64.dmi. Replace with new art, see ART_NEEDED.md.",
+  "size": {
+    "x": 32,
+    "y": 64
+  },
+  "states": [
+    {
+      "name": "imp",
+      "directions": 4,
+      "delays": [
+        [
+          0.6,
+          0.5
+        ],
+        [
+          0.6,
+          0.5
+        ],
+        [
+          0.6,
+          0.5
+        ],
+        [
+          0.6,
+          0.5
+        ]
+      ]
+    }
+  ]
+}
