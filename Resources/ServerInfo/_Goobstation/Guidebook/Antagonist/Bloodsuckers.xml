@@ -1,0 +1,62 @@
+<Document>
+  # Bloodsuckers
+
+  [color=#8b0000]An undead predator hiding among the crew, feeding in secret and binding mortals to its will.[/color]
+
+  <Box>
+    <GuideEntityEmbed Entity="CrateCoffin" Caption="Coffin"/>
+    <GuideEntityEmbed Entity="Bloodpack" Caption="Blood pack"/>
+  </Box>
+
+  One Bloodsucker can awaken at the start of a shift. They look like anyone else, but under examination they are unnaturally pale.
+
+  ## Feeding
+
+  Use [bold]Feed[/bold] on a victim to drink their blood. Feeding from a hard grab bites the neck and puts the victim to sleep, but everyone nearby sees it. Feeding on the wrist is quieter. Being seen feeding breaks the Masquerade.
+
+  ## Sol
+
+  Every 10 minutes the sun rises over the station for 4 minutes. Bloodsuckers are warned one minute before. During [color=orange]Sol[/color] a Bloodsucker burns unless they rest inside a claimed coffin. Use [bold]Claim[/bold] on a coffin to make it your lair. Burns only heal near your coffin.
+
+  ## Ranks
+
+  A Bloodsucker ranks up for every Sol slept through in their coffin and for every 300u of blood they drink. Each rank unlocks new powers:
+
+  - [bold]Rank 1:[/bold] Feed, Claim, Sense cycle, Masquerade, Brawn
+  - [bold]Rank 2:[/bold] Materialize rack, Vassalize, Beguile, Sanguine Olfaction, Immortal Haste
+  - [bold]Rank 3:[/bold] Predatory Lunge, Help Vassal, Veil of Many Faces
+  - [bold]Rank 4:[/bold] Mesmerize, Cloak of Darkness
+  - [bold]Rank 5:[/bold] Trespass, Fortitude
+  - [bold]Rank 6:[/bold] Vanishing Act
+
+  ## Vassals
+
+  A Bloodsucker can bind crew members as [color=#8b0000]vassals[/color] by strapping them to a persuasion rack and using Vassalize, or by offering them the dark gift with Beguile. Vassals serve their master and share their goals. Mindshielded crew and the Chaplain cannot be beguiled.
+
+  ## Humanity
+
+  Every Bloodsucker walks a line between hiding as a mortal and becoming a monster.
+
+  [bold]Losing humanity:[/bold] draining a victim to the brink of death, being seen feeding, and vassalizing on the rack.
+  [bold]Gaining humanity:[/bold] letting a victim go before they are in danger, and resting through Sol in a coffin.
+
+  [color=#a0c0ff][bold]Masquerade path (70 humanity and above)[/bold][/color]
+  - Feeding on a sleeping victim leaves no trace and never breaks the Masquerade.
+  - Blood packs from Medbay can be drunk with Feed. They count toward rank at half the rate.
+  - Beguile works: a willing crew member can accept the dark gift and become a vassal without a rack.
+  - Mesmerize also wipes the victim's memory of the last minute.
+  - Resting through Sol grants two ranks instead of one.
+
+  [color=red][bold]Monster path (low humanity)[/bold][/color]
+  - Feeding drains faster and Brawn hits harder the lower your humanity.
+  - Frenzy starts earlier and burns harder.
+  - Below 30 humanity you can no longer use Masquerade or Veil, and examining you shows glowing red eyes and fangs.
+
+  ## Fighting Bloodsuckers
+
+  - Bullets pass straight through them, lasers do less damage and disablers barely tire them.
+  - Ordinary melee weapons barely hurt them.
+  - [color=gold]Holy water[/color] burns them, whether splashed on them or in their blood. Feeding on someone with holy water in their veins hurts them too.
+  - The [bold]Chaplain[/bold] can bless a melee weapon with their bible. For 10 minutes it glows with holy light and deals heavy holy damage to Bloodsuckers.
+  - While masquerading, a Bloodsucker loses all of these protections, and taking 30 damage breaks the Masquerade and reveals them.
+</Document>

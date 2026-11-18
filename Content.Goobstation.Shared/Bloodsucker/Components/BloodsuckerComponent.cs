@@ -1,4 +1,5 @@
 using Content.Shared.Alert;
+using Content.Shared.Damage;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 
@@ -41,6 +42,30 @@ public sealed partial class BloodsuckerComponent : Component
     public int Rank = 1;
 
     /// <summary>
+    /// Highest rank whose powers have been granted.
+    /// </summary>
+    [DataField]
+    public int UnlockedRank;
+
+    /// <summary>
+    /// Blood drunk from victims, in units, over the whole round.
+    /// </summary>
+    [DataField]
+    public float BloodDrunk;
+
+    /// <summary>
+    /// Blood that has to be drunk to gain a rank.
+    /// </summary>
+    [DataField]
+    public float BloodPerRank = 300f;
+
+    [DataField]
+    public float BloodTowardsRank;
+
+    [DataField]
+    public int VassalsMade;
+
+    /// <summary>
     /// Blood volume (units) at or below which frenzy triggers.
     /// </summary>
     [DataField, AutoNetworkedField]
@@ -53,6 +78,30 @@ public sealed partial class BloodsuckerComponent : Component
     /// <summary>Multiplier applied to flash stun duration against this entity.</summary>
     [DataField]
     public float FlashDurationMultiplier = 3f;
+
+    /// <summary>Multiplier for stamina damage from projectiles like disablers.</summary>
+    [DataField]
+    public float ProjectileStaminaMultiplier = 0.3f;
+
+    /// <summary>Multiplier for damage from hitscan weapons like lasers.</summary>
+    [DataField]
+    public float HitscanDamageMultiplier = 0.8f;
+
+    /// <summary>Damage taken from melee weapons that are not blessed.</summary>
+    [DataField]
+    public DamageModifierSet UnblessedMeleeModifiers = new()
+    {
+        Coefficients =
+        {
+            ["Blunt"] = 0.25f,
+            ["Slash"] = 0.25f,
+            ["Piercing"] = 0.25f,
+            ["Heat"] = 0.25f,
+            ["Cold"] = 0.25f,
+            ["Shock"] = 0.25f,
+            ["Caustic"] = 0.25f,
+        },
+    };
 
     /// <summary>
     /// Entity UID of the coffin this bloodsucker has claimed.

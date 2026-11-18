@@ -1,5 +1,6 @@
 using Content.Goobstation.Shared.Bloodsuckers.Components;
 using Content.Goobstation.Shared.Bloodsuckers.Systems;
+using Content.Server.Antag;
 using Content.Shared.Alert;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Systems;
@@ -17,6 +18,7 @@ public sealed partial class BloodsuckerDayNightSystem : SharedBloodsuckerDayNigh
     [Dependency] private AudioSystem _audio = default!;
     [Dependency] private DamageableSystem _damageable = default!;
     [Dependency] private AlertsSystem _alerts = default!;
+    [Dependency] private AntagSelectionSystem _antag = default!;
 
     public override void Update(float frameTime)
     {
@@ -41,9 +43,13 @@ public sealed partial class BloodsuckerDayNightSystem : SharedBloodsuckerDayNigh
         if (!cycle.SentFirstWarning && cycle.TimeUntilCycle <= cycle.WarnFirst)
         {
             cycle.SentFirstWarning = true;
-            BroadcastToVampires(Loc.GetString("bloodsucker-sol-warn-first",
-                ("minutes", MathF.Round(cycle.WarnFirst / 60f))),
-                PopupType.MediumCaution);
+            var warning = Loc.GetString("bloodsucker-sol-warn-first",
+                ("minutes", MathF.Round(cycle.WarnFirst / 60f)));
+            BroadcastToVampires(warning, PopupType.LargeCaution);
+
+            var query = EntityQueryEnumerator<BloodsuckerComponent>();
+            while (query.MoveNext(out var vamp, out _))
+                _antag.SendBriefing(vamp, warning, Color.Orange, null);
         }
 
         if (!cycle.SentFinalWarning && cycle.TimeUntilCycle <= cycle.WarnFinal)
