@@ -69,6 +69,7 @@ bloodsucker-bloodpack-drink = You drain the blood pack. It's no fresh kill, but 
 bloodsucker-rank-up-patient = Your patience is rewarded.
 
 bloodsucker-forget-victim = Your mind goes blank. You can't remember anything that happened in the last minute.
+bloodsucker-forget-unknown-name = Unknown
 
 bloodsucker-beguile-low-humanity = You need more humanity to charm the living.
 bloodsucker-beguile-fail = {CAPITALIZE(THE($target))} can't accept the dark gift.

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using Content.Goobstation.Common.Bloodsuckers; // Solar
 using Content.Shared.Ghost;
 using Content.Shared.IdentityManagement.Components;
 using Robust.Shared.Utility; // Goob
@@ -32,6 +33,10 @@ public static class Identity
             return FormattedMessage.EscapeText(meta.EntityName); // Goob Sanitize Text
 
         var uidName = meta.EntityName;
+
+        // Solar: Forget makes the victim see the Bloodsucker as Unknown
+        if (viewer != null && ent.TryGetComponent<BloodsuckerForgottenComponent>(viewer, out var forgotten) && forgotten.Target == uid)
+            return Loc.GetString("bloodsucker-forget-unknown-name");
 
         if (!ent.TryGetComponent<IdentityComponent>(uid, out var identity))
             return FormattedMessage.EscapeText(uidName); // Goob Sanitize Text

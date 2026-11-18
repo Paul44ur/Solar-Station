@@ -71,3 +71,8 @@
   parent: StatusEffectSpeed
   id: SlasherStatusEffectKillSpeed
   name: slasher kill speedup
+
+- type: entity
+  parent: StatusEffectSlowdown
+  id: BloodsuckerForgetSlowdownEffect
+  name: forget stagger

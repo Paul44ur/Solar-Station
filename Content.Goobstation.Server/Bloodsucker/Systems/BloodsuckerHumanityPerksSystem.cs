@@ -1,3 +1,4 @@
+using Content.Goobstation.Common.Bloodsuckers;
 using Content.Goobstation.Common.Religion;
 using Content.Goobstation.Shared.Bloodsuckers.Components;
 using Content.Goobstation.Shared.Bloodsuckers.Components.Actions;
@@ -7,12 +8,17 @@ using Content.Goobstation.Shared.Bloodsuckers.Systems;
 using Content.Server.Antag;
 using Content.Server.Chat.Systems;
 using Content.Shared.Chat;
+using Content.Shared.Eye.Blinding.Components;
 using Content.Shared.IdentityManagement;
 using Content.Shared.Mind;
 using Content.Shared.Mindshield.Components;
 using Content.Shared.Mobs.Systems;
+using Content.Shared.Movement.Systems;
 using Content.Shared.Popups;
+using Content.Shared.StatusEffect;
 using Content.Shared.Verbs;
+using Robust.Shared.Player;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 
 namespace Content.Goobstation.Server.Bloodsuckers.Systems;
@@ -29,6 +35,13 @@ public sealed partial class BloodsuckerHumanityPerksSystem : EntitySystem
     [Dependency] private MobStateSystem _mobState = default!;
     [Dependency] private AntagSelectionSystem _antag = default!;
     [Dependency] private ChatSystem _chat = default!;
+    [Dependency] private StatusEffectsSystem _status = default!;
+    [Dependency] private MovementModStatusSystem _movementMod = default!;
+
+    private static readonly EntProtoId ForgetSlowdown = "BloodsuckerForgetSlowdownEffect";
+    private static readonly TimeSpan ForgetStagger = TimeSpan.FromSeconds(5);
+    private static readonly TimeSpan ForgetUnknownTime = TimeSpan.FromSeconds(45);
+    private const float ForgetChatSeconds = 60f;
 
     public override void Initialize()
     {
@@ -39,9 +52,33 @@ public sealed partial class BloodsuckerHumanityPerksSystem : EntitySystem
         SubscribeLocalEvent<BloodsuckerBeguileComponent, GetVerbsEvent<AlternativeVerb>>(OnGetVerbs);
     }
 
+    public override void Update(float frameTime)
+    {
+        base.Update(frameTime);
+
+        var query = EntityQueryEnumerator<BloodsuckerForgottenComponent>();
+        while (query.MoveNext(out var uid, out var forgotten))
+        {
+            if (forgotten.EndTime <= _timing.CurTime)
+                RemCompDeferred<BloodsuckerForgottenComponent>(uid);
+        }
+    }
+
     private void OnForget(Entity<BloodsuckerComponent> ent, ref BloodsuckerForgetEvent args)
     {
-        _antag.SendBriefing(args.Target, Loc.GetString("bloodsucker-forget-victim"), Color.MediumPurple, null);
+        var target = args.Target;
+        _status.TryAddStatusEffect<BlurryVisionComponent>(target, "BlurryVision", ForgetStagger, true);
+        _movementMod.TryUpdateMovementSpeedModDuration(target, ForgetSlowdown, ForgetStagger, 0.5f, 0.5f);
+
+        var forgotten = EnsureComp<BloodsuckerForgottenComponent>(target);
+        forgotten.Target = ent.Owner;
+        forgotten.EndTime = _timing.CurTime + ForgetUnknownTime;
+        Dirty(target, forgotten);
+
+        if (TryComp<ActorComponent>(target, out var actor))
+            RaiseNetworkEvent(new BloodsuckerForgetChatEvent(ForgetChatSeconds), actor.PlayerSession);
+
+        _antag.SendBriefing(target, Loc.GetString("bloodsucker-forget-victim"), Color.MediumPurple, null);
     }
 
     private void OnBeguile(Entity<BloodsuckerComponent> ent, ref BloodsuckerBeguileEvent args)
