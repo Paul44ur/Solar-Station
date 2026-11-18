@@ -653,8 +653,10 @@ public sealed partial class DevilContractSystem : EntitySystem
         var ev = clause.Event;
         ev.Target = target;
 
-        if (contract is not null)
-            ev.Contract = contract;
+        // Solar: clause events are shared prototype instances, so always overwrite (or clear) the contract,
+        // otherwise a clause applied without a contract would act on the last contract that used it.
+        ev.Contract = contract?.Comp;
+        ev.ContractUid = contract?.Owner;
 
         // you gotta cast this shit to object, don't ask me vro idk either
         RaiseLocalEvent(target, (object)ev, true);

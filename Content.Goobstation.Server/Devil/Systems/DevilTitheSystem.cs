@@ -116,23 +116,50 @@ public sealed partial class DevilTitheSystem : EntitySystem
         if (!TryComp<DevilTithedComponent>(target, out var tithed))
             return;
 
+        // The devil gives up what it gained from this clause too. Its body may have changed form since,
+        // so it is found through its mind.
+        EntityUid? devil = null;
+        DevilTitheBonusComponent? bonus = null;
+        if (TryComp<MindComponent>(tithed.DevilMind, out var devilMind)
+            && devilMind.OwnedEntity is { } owned
+            && TryComp(owned, out bonus))
+            devil = owned;
+
         switch (clauseEvent)
         {
             case DevilContractLifeForceEvent lifeForce:
                 var amount = FixedPoint2.Min(lifeForce.Amount, tithed.HealthLost);
                 tithed.HealthLost -= amount;
                 AdjustThresholds(target, amount);
+
+                if (devil != null && bonus != null)
+                {
+                    var taken = FixedPoint2.Min(amount, bonus.HealthGained);
+                    bonus.HealthGained -= taken;
+                    AdjustThresholds(devil.Value, -taken);
+                }
                 break;
             case DevilContractSwiftnessEvent swiftness when swiftness.TargetMultiplier > 0:
                 tithed.SpeedMultiplier = MathF.Min(tithed.SpeedMultiplier / swiftness.TargetMultiplier, 1f);
                 _speed.RefreshMovementSpeedModifiers(target);
+
+                if (devil != null && bonus != null)
+                {
+                    bonus.SpeedMultiplier = MathF.Max(bonus.SpeedMultiplier - swiftness.DevilBonus, 1f);
+                    _speed.RefreshMovementSpeedModifiers(devil.Value);
+                }
                 break;
             case DevilContractMightEvent might when might.TargetMultiplier > 0:
                 tithed.MeleeMultiplier = MathF.Min(tithed.MeleeMultiplier / might.TargetMultiplier, 1f);
+
+                if (bonus != null)
+                    bonus.MeleeMultiplier = MathF.Max(bonus.MeleeMultiplier - might.DevilBonus, 1f);
                 break;
         }
 
         Dirty(target, tithed);
+        if (devil != null && bonus != null)
+            Dirty(devil.Value, bonus);
     }
 
     /// <summary>

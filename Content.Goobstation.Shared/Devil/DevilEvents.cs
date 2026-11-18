@@ -46,6 +46,11 @@ public abstract partial class BaseDevilContractEvent : EntityEventArgs
     public DevilContractComponent? Contract;
 
     /// <summary>
+    /// Solar: the contract entity, for clauses that apply further clauses from the same contract.
+    /// </summary>
+    public EntityUid? ContractUid;
+
+    /// <summary>
     /// The target affected by this contract.
     /// </summary>
     public EntityUid Target;
