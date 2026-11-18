@@ -31,6 +31,13 @@ public sealed partial class DevilComponent : Component
     public int Souls;
 
     /// <summary>
+    /// Solar: the minds (or bodies, when there is no mind) this devil already took a soul from.
+    /// A person only has one soul to sell.
+    /// </summary>
+    [DataField]
+    public HashSet<EntityUid> SoulSources = new();
+
+    /// <summary>
     /// The amount of souls collected while polymorphed into Lesser form.
     /// </summary>
     [DataField]

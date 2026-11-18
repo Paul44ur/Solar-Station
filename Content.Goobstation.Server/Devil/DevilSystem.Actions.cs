@@ -14,6 +14,9 @@ using Content.Shared.IdentityManagement;
 using Content.Shared.Mind;
 using Content.Shared.Popups;
 using Content.Shared.Storage.EntitySystems;
+using Content.Goobstation.Common.Religion;
+using Content.Shared.Speech.Muting;
+using Content.Shared.StatusEffect;
 
 namespace Content.Goobstation.Server.Devil;
 
@@ -21,6 +24,7 @@ public sealed partial class DevilSystem
 {
     [Dependency] private StoreSystem _store = default!;
     [Dependency] private SharedMindSystem _mind = default!;
+    [Dependency] private StatusEffectsSystem _statusEffects = default!;
 
     private void SubscribeAbilities()
     {
@@ -29,6 +33,8 @@ public sealed partial class DevilSystem
         SubscribeLocalEvent<DevilComponent, ShadowJauntEvent>(OnShadowJaunt);
         SubscribeLocalEvent<DevilComponent, DevilGripEvent>(OnDevilGrip);
         SubscribeLocalEvent<DevilComponent, DevilPossessionEvent>(OnPossess);
+        SubscribeLocalEvent<DevilComponent, DevilVoiceOfHellEvent>(OnVoiceOfHell);
+        SubscribeLocalEvent<DevilComponent, DevilSummonImpsEvent>(OnSummonImps);
     }
 
     private void OnContractCreated(Entity<DevilComponent> devil, ref CreateContractEvent args)
@@ -43,6 +49,7 @@ public sealed partial class DevilSystem
             return;
 
         contractComponent.ContractOwner = args.Performer;
+        _contract.OpenClauseMenu(contract, args.Performer); // Solar
 
         PlayFwooshSound(devil);
         DoContractFlavor(devil, Identity.Name(devil, EntityManager));
@@ -109,6 +116,49 @@ public sealed partial class DevilSystem
     }
 
 
+    // Solar: lesser form calls imps up from below. Ghosts can take them over.
+    private void OnSummonImps(Entity<DevilComponent> devil, ref DevilSummonImpsEvent args)
+    {
+        if (!TryUseAbility(args))
+            return;
+
+        var coords = Transform(devil).Coordinates;
+        for (var i = 0; i < args.Amount; i++)
+        {
+            Spawn(devil.Comp.PentagramEffectProto, coords);
+            Spawn(args.ImpPrototype, coords);
+        }
+
+        PlayFwooshSound(devil);
+        _popup.PopupEntity(Loc.GetString("devil-summon-imps"), devil, PopupType.MediumCaution);
+    }
+
+    // Solar: Voice of Hell. Chaplains are protected by their faith.
+    private void OnVoiceOfHell(Entity<DevilComponent> devil, ref DevilVoiceOfHellEvent args)
+    {
+        if (args.Handled)
+            return;
+
+        var target = args.Target;
+        if (HasComp<BibleUserComponent>(target) || HasComp<DevilComponent>(target))
+        {
+            _popup.PopupEntity(Loc.GetString("devil-voice-of-hell-resisted", ("target", Identity.Entity(target, EntityManager))), devil, devil);
+            args.Handled = true;
+            return;
+        }
+
+        if (!_statusEffects.TryAddStatusEffect<MutedComponent>(target, "Muted", args.Duration, true))
+        {
+            _popup.PopupEntity(Loc.GetString("devil-voice-of-hell-failed"), devil, devil);
+            return;
+        }
+
+        args.Handled = true;
+        PlayFwooshSound(devil);
+        _popup.PopupEntity(Loc.GetString("devil-voice-of-hell-target"), target, target, PopupType.LargeCaution);
+        _popup.PopupEntity(Loc.GetString("devil-voice-of-hell-user", ("target", Identity.Entity(target, EntityManager))), devil, devil);
+    }
+
     private void OnPossess(Entity<DevilComponent> devil, ref DevilPossessionEvent args)
     {
         if (!TryComp<CondemnedComponent>(args.Target, out var condemned) || condemned.SoulOwnedNotDevil)
@@ -121,11 +171,13 @@ public sealed partial class DevilSystem
         if (!TryUseAbility(args))
             return;
 
+        // Solar: scale a copy, so the stored base duration doesn't keep multiplying on every cast.
+        var duration = devil.Comp.PossessionDuration;
         if (devil.Comp.PowerLevel != DevilPowerLevel.None)
-            devil.Comp.PossessionDuration *= (int)devil.Comp.PowerLevel;
+            duration *= (int)devil.Comp.PowerLevel;
 
         // Only mark as handled if possession succeeds to avoid wasting the cooldown.
-        if (!_possession.TryPossessTarget(args.Target, args.Performer, devil.Comp.PossessionDuration, true, polymorphPossessor: true))
+        if (!_possession.TryPossessTarget(args.Target, args.Performer, duration, true, polymorphPossessor: true))
             return;
 
         Spawn(devil.Comp.JauntAnimationProto, Transform(args.Target).Coordinates);

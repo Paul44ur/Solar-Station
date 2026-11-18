@@ -34,6 +34,32 @@ public sealed partial class DevilAuthorityEvent : InstantActionEvent;
 
 public sealed partial class DevilPossessionEvent : EntityTargetActionEvent;
 
+// Solar: Archdevil toggle for its infernal aura (Hell's Seven Rings).
+public sealed partial class DevilToggleInfernalAuraEvent : InstantActionEvent;
+
+// Solar: Archdevil collects an owned soul on touch.
+public sealed partial class DevilSoulHarvestEvent : EntityTargetActionEvent;
+
+// Solar: Archdevil offers one contract to everyone around it at once.
+public sealed partial class DevilMassContractEvent : InstantActionEvent;
+
+// Solar: lesser form summons imps.
+public sealed partial class DevilSummonImpsEvent : InstantActionEvent
+{
+    [DataField]
+    public EntProtoId ImpPrototype = "MobDevilImp";
+
+    [DataField]
+    public int Amount = 2;
+}
+
+// Solar: lesser form ability that mutes a target for a short time.
+public sealed partial class DevilVoiceOfHellEvent : EntityTargetActionEvent
+{
+    [DataField]
+    public TimeSpan Duration = TimeSpan.FromSeconds(10);
+}
+
 public sealed partial class DevilOpenStoreEvent : InstantActionEvent;
 
 [Serializable]

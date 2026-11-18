@@ -124,6 +124,10 @@ public sealed partial class PaperSystem : EntitySystem // Goob
 
     private void OnInteractUsing(Entity<PaperComponent> entity, ref InteractUsingEvent args)
     {
+        // Solar: something else (like a devil contract's lock) already handled this pen.
+        if (args.Handled)
+            return;
+
         // only allow editing if there are no stamps or when using a cyberpen
         var editable = entity.Comp.StampedBy.Count == 0 || _tagSystem.HasTag(args.Used, WriteIgnoreStampsTag);
         if (_tagSystem.HasTag(args.Used, WriteTag))

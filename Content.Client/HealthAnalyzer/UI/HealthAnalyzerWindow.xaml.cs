@@ -260,6 +260,17 @@ namespace Content.Client.HealthAnalyzer.UI
                     Margin = new Thickness(0, 4),
                 });
 
+            // Solar: life force taken by a devil shows up as untreatable deep tissue damage.
+            if (_entityManager.TryGetComponent<Content.Goobstation.Shared.Devil.Components.DevilTithedComponent>(_target, out var tithed)
+                && tithed.HealthLost > 0)
+                ConditionsListContainer.AddChild(new RichTextLabel
+                {
+                    Text = Loc.GetString("condition-body-devil-deep-tissue",
+                        ("entity", Identity.Name(_target.Value, _entityManager)),
+                        ("amount", tithed.HealthLost.Int())),
+                    Margin = new Thickness(0, 4),
+                });
+
             foreach (var (bodyPart, isBleeding) in msg.Bleeding)
             {
                 if (!isBleeding)

@@ -41,10 +41,12 @@ default-contract-content = This binding contract made this day between:
             - The Mortal Party (Hereinafter "Contractee")
 
             {"["}bold]Clauses of Binding:{"["}/bold]
-            {"["}italic]The following parties give up the following possessions{"["}/italic{"]"}
+            {"["}italic]The Contractee agrees to the following terms{"["}/italic{"]"}
 
             Contractee: Soul Ownership
+            {"["}color=#999999]{"["}italic]The Contractee's soul passes into the keeping of the Contractor, now and forever.{"["}/italic]{"["}/color]
             Contractee: Death
+            {"["}color=#999999]{"["}italic]The Contractee is granted one escape from death.{"["}/italic]{"["}/color]
 
             {"["}italic]All clauses come into effect upon signing of this paper by both parties.{"["}/italic]
             {"["}italic]{"["}color=#ac3a0d]Clauses may not be broken. Ever.{"["}/color]{"["}/italic]

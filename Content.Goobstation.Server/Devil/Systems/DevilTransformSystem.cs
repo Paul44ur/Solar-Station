@@ -21,6 +21,7 @@ namespace Content.Goobstation.Server.Devil.Systems;
 public sealed partial class DevilTransformSystem : EntitySystem
 {
     [Dependency] private SharedMindSystem _mind = default!;
+    [Dependency] private DevilTitheSystem _tithe = default!; // Solar
     [Dependency] private ActionsSystem _actions = default!;
     [Dependency] private ActionContainerSystem _actionContainer = default!;
 
@@ -67,8 +68,14 @@ public sealed partial class DevilTransformSystem : EntitySystem
             TryComp<DevilComponent>(newEntity, out var newDevil))
         {
             newDevil.Souls = oldDevil.Souls;
+            newDevil.SoulSources = new(oldDevil.SoulSources); // Solar
+            newDevil.SoulsWhileLesser = oldDevil.SoulsWhileLesser; // Solar
             newDevil.PowerLevel = oldDevil.PowerLevel;
         }
+
+        // Solar: keep what the devil gained from tithes.
+        if (TryComp<DevilTitheBonusComponent>(uid, out var oldBonus))
+            _tithe.ReapplyBonus(newEntity, oldBonus);
 
         // Clear the old entity's action bar entries before transferring,
         if (_actionsQuery.TryComp(uid, out var oldActionsComp))
@@ -98,6 +105,10 @@ public sealed partial class DevilTransformSystem : EntitySystem
             // Lesser devils don't get jaunt or archfire.
             _actions.RemoveAction(newEntity, newComp.JauntActionEntity);
             _actions.RemoveAction(newEntity, newComp.ArchFireActionEntity);
+
+            // Solar: lesser form gets Voice of Hell.
+            _actions.AddAction(newEntity, "ActionDevilVoiceOfHell");
+            _actions.AddAction(newEntity, "ActionDevilSummonImps");
         }
         else
         {
@@ -112,6 +123,12 @@ public sealed partial class DevilTransformSystem : EntitySystem
 
             if (newComp.ArchFireActionEntity == null)
                 _actions.AddAction(newEntity, ref newComp.ArchFireActionEntity, newComp.ArchFireAction);
+
+            // Solar: infernal aura and its toggle.
+            EnsureComp<InfernalAuraComponent>(newEntity);
+            _actions.AddAction(newEntity, "ActionDevilHellsSevenRings");
+            _actions.AddAction(newEntity, "ActionDevilSoulHarvest");
+            _actions.AddAction(newEntity, "ActionDevilMassContract");
         }
 
         Del(uid);

@@ -1,3 +1,4 @@
+using System.Linq;
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using System.Text;
@@ -102,6 +103,23 @@ public sealed partial class DevilRuleSystem : GameRuleSystem<DevilRuleComponent>
         }
         var sb = new StringBuilder();
         sb.AppendLine(Loc.GetString($"roundend-prepend-devil-contracts{(!string.IsNullOrWhiteSpace(mostContractsName) ? "-named" : "")}", ("name", mostContractsName), ("number", mostContracts)));
+
+        // Solar: the deal ledger.
+        if (comp.Deals.Count > 0)
+        {
+            sb.AppendLine(Loc.GetString("devil-ledger-header"));
+            foreach (var deal in comp.Deals)
+            {
+                var clauses = deal.Clauses.Count > 0
+                    ? string.Join(", ", deal.Clauses.Select(c => deal.Voided.Contains(c) ? Loc.GetString("devil-ledger-voided", ("clause", c)) : c))
+                    : Loc.GetString("devil-ledger-no-clauses");
+
+                sb.AppendLine(Loc.GetString("devil-ledger-entry", ("devil", deal.Devil), ("signer", deal.Signer), ("clauses", clauses)));
+                if (deal.Harvested)
+                    sb.AppendLine(Loc.GetString("devil-ledger-harvested", ("signer", deal.Signer)));
+            }
+        }
+
         args.Text = sb.ToString();
     }
 
@@ -119,6 +137,7 @@ public sealed partial class DevilRuleSystem : GameRuleSystem<DevilRuleComponent>
             _chat.DispatchStationAnnouncement(
                 uid,
                 Loc.GetString("devil-ascension-announcement", ("trueName", devil.TrueName)),
+                sender: Loc.GetString("devil-ascension-announcement-sender"), // Solar
                 colorOverride: Color.DarkRed,
                 announcementSound: rule.AscensionSound
             );

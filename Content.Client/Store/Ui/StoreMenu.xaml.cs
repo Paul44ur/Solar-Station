@@ -63,8 +63,12 @@ public sealed partial class StoreMenu : DefaultWindow
         BalanceInfo.SetMarkup(balanceStr.TrimEnd());
 
         var disabled = true;
+        var anyWithdrawable = false; // Solar
         foreach (var type in currency)
         {
+            if (type.Value.CanWithdraw && type.Value.Cash != null)
+                anyWithdrawable = true; // Solar
+
             if (type.Value.CanWithdraw && type.Value.Cash != null && type.Key.Item2 > 0)
             {
                 disabled = false;
@@ -73,6 +77,8 @@ public sealed partial class StoreMenu : DefaultWindow
         }
 
         WithdrawButton.Disabled = disabled;
+        // Solar: stores whose currencies can never be withdrawn (like devil souls) don't show the button at all.
+        WithdrawButton.Visible = anyWithdrawable;
     }
 
     public void UpdateListing(List<ListingDataWithCostModifiers> listings)

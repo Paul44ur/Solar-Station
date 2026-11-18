@@ -185,6 +185,11 @@ public sealed partial class DevilSystem : EntitySystem
         devil.Comp.Souls += args.Amount;
         _popup.PopupEntity(Loc.GetString("contract-soul-added"), args.User, args.User, PopupType.MediumCaution);
 
+        // Solar: this counter was never increased, so the Archdevil unlock could never happen.
+        var lesserBefore = devil.Comp.SoulsWhileLesser;
+        if (HasComp<Content.Goobstation.Shared.Devil.Components.DevilLesserFormComponent>(devil))
+            devil.Comp.SoulsWhileLesser += args.Amount;
+
         if (_prototype.TryIndex(devil.Comp.DevilBranchPrototype, out var proto))
         {
             foreach (var unlock in proto.ConditionalUnlocks)
@@ -195,7 +200,9 @@ public sealed partial class DevilSystem : EntitySystem
                 if (!EntityManager.HasComponent(devil, unlock.RequiredComponentType))
                     continue;
 
-                if (devil.Comp.SoulsWhileLesser < unlock.SoulsRequired)
+                // Only grant once, on the soul that crosses the threshold.
+                if (devil.Comp.SoulsWhileLesser < unlock.SoulsRequired
+                    || lesserBefore >= unlock.SoulsRequired)
                     continue;
 
                 foreach (var action in unlock.Actions)
@@ -225,6 +232,10 @@ public sealed partial class DevilSystem : EntitySystem
 
         if (_mind.TryGetObjectiveComp<SignContractConditionComponent>(mindId, out var objectiveComp, mind))
             objectiveComp.ContractsSigned += args.Amount;
+
+        // Solar
+        if (_mind.TryGetObjectiveComp<DevilSoulPercentObjectiveComponent>(mindId, out var soulsComp, mind))
+            soulsComp.Souls += args.Amount;
     }
 
     private void OnShop(Entity<DevilComponent> ent, ref DevilOpenStoreEvent args)
@@ -275,7 +286,9 @@ public sealed partial class DevilSystem : EntitySystem
     private void OnListen(Entity<DevilComponent> devil, ref ListenEvent args)
     {
         // Other Devils and entities without souls have no authority over you.
-        if (HasComp<DevilComponent>(args.Source)
+        // Solar: an Archdevil has shed its name entirely, so it no longer has power over it.
+        if (HasComp<Content.Goobstation.Shared.Devil.Components.ArchdevilComponent>(devil)
+        || HasComp<DevilComponent>(args.Source)
         || HasComp<CondemnedComponent>(args.Source)
         || HasComp<SiliconComponent>(args.Source)
         || args.Source == devil.Owner)
@@ -326,6 +339,10 @@ public sealed partial class DevilSystem : EntitySystem
         var behavior = devil.Comp.TimesExorcised <= DevilComponent.MaxBanishedBeforePermanent
             ? CondemnedBehavior.Banish
             : CondemnedBehavior.Delete;
+
+        // Solar: banished for good, so everything the devil took through tithes is returned.
+        if (behavior == CondemnedBehavior.Delete)
+            EntityManager.System<Systems.DevilTitheSystem>().ReleaseTithes(devil);
 
         _condemned.StartCondemnation(
             target,
