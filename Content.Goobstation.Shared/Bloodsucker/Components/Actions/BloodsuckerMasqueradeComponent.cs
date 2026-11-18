@@ -1,5 +1,7 @@
+using Content.Shared.Alert;
 using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom;
 
 namespace Content.Goobstation.Shared.Bloodsuckers.Components.Actions;
@@ -68,6 +70,9 @@ public sealed partial class BloodsuckerMasqueradeComponent : Component
     /// </summary>
     [DataField]
     public float BreakDamage = 30f;
+
+    [DataField]
+    public ProtoId<AlertPrototype> Alert = "BloodsuckerMasquerade";
 
     [DataField]
     public float DamageTaken;

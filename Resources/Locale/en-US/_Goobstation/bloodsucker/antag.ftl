@@ -53,6 +53,8 @@ bloodsucker-roundend-stats = [color=darkred]{$name}[/color] reached rank {$rank}
 bloodsucker-masquerade-broken-user = The pain tears your Masquerade apart!
 bloodsucker-masquerade-broken-others = {CAPITALIZE(THE($user))}'s skin turns corpse-pale and their eyes flash red!
 
+alert-bloodsucker-masquerade-name = Masquerade
+alert-bloodsucker-masquerade-desc = You pass as human. Your undead resistances are gone.
 alert-bloodsucker-humanity-name = Humanity
 alert-bloodsucker-humanity-desc = How much of your mortal self remains. High humanity unlocks the Masquerade path, low humanity makes you a stronger but obvious Monster.
 bloodsucker-humanity-too-low = You are too far gone to pass as human.
@@ -73,5 +75,8 @@ bloodsucker-beguile-fail = {CAPITALIZE(THE($target))} can't accept the dark gift
 bloodsucker-beguile-fail-protected = {CAPITALIZE(THE($target))}'s mind is shielded against you.
 bloodsucker-beguile-offered = You offer {THE($target)} the dark gift. They have 30 seconds to accept.
 bloodsucker-beguile-offer = {CAPITALIZE(THE($user))} offers you a dark gift: eternal service to the night. To accept, right-click {OBJECT($user)} within 30 seconds and choose "Accept the dark gift". You would become {POSS-ADJ($user)} vassal.
+bloodsucker-beguile-whisper = Serve me, and you will never die.
+bloodsucker-beguile-offer-popup = {CAPITALIZE(THE($user))} offers you a dark gift. Right-click {OBJECT($user)} to accept.
 bloodsucker-beguile-accept-verb = Accept the dark gift
+bloodsucker-beguile-accepted-vassal = You accept the dark gift. You now serve {THE($user)}.
 bloodsucker-beguile-accepted = {CAPITALIZE(THE($target))} accepts your gift and becomes your vassal.

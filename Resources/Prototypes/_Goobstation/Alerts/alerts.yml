@@ -156,6 +156,14 @@
   alertViewEntity: AlertBloodsuckerCounterView
 
 - type: alert
+  id: BloodsuckerMasquerade
+  name: alert-bloodsucker-masquerade-name
+  description: alert-bloodsucker-masquerade-desc
+  icons:
+  - sprite: /Textures/_Goobstation/Bloodsucker/Actions/actions_bloodsucker.rsi
+    state: power_human
+
+- type: alert
   id: BloodsuckerBlood
   name: alert-bloodsucker-blood-name
   description: alert-bloodsucker-blood-desc

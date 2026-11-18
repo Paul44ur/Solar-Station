@@ -108,7 +108,7 @@ public sealed class EntityHealthBarOverlay : Overlay
 
             // Hardcoded width of the progress bar because it doesn't match the texture.
             const float startX = 8f;
-            var endX = widthOfMob - 8f;
+            var endX = MathF.Max(widthOfMob - 8f, startX + 1f); // Solar
 
             var xProgress = (endX - startX) * deathProgress.ratio + startX;
 

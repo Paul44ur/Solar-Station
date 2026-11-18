@@ -11,3 +11,9 @@
   id: BloodsuckerDayNightManager
   components:
   - type: BloodsuckerDayNight
+    timeUntilCycle: 600
+    nightDurationMin: 600
+    nightDurationMax: 600
+    dayDurationMin: 240
+    dayDurationMax: 240
+    warnFirst: 60

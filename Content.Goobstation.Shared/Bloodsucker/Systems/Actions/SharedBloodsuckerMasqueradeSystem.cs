@@ -1,6 +1,7 @@
 using Content.Goobstation.Shared.Bloodsuckers.Components;
 using Content.Goobstation.Shared.Bloodsuckers.Components.Actions;
 using Content.Goobstation.Shared.Bloodsuckers.Events;
+using Content.Shared.Alert;
 using Content.Shared.Damage.Systems;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
@@ -16,6 +17,7 @@ public abstract partial class SharedBloodsuckerMasqueradeSystem : EntitySystem
     [Dependency] private SharedAudioSystem _audio = default!;
     [Dependency] private BloodsuckerHumanitySystem _humanity = default!;
     [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private AlertsSystem _alerts = default!;
 
     private EntityQuery<MobStateComponent> _mobStateQuery;
 
@@ -91,6 +93,7 @@ public abstract partial class SharedBloodsuckerMasqueradeSystem : EntitySystem
         }
 
         RemoveBloodsuckerPassives(ent.Owner);
+        _alerts.ShowAlert(ent.Owner, ent.Comp.Alert);
 
         _audio.PlayPredicted(ent.Comp.ActivateSound, ent.Owner, ent.Owner);
         _popup.PopupPredicted(
@@ -113,6 +116,7 @@ public abstract partial class SharedBloodsuckerMasqueradeSystem : EntitySystem
         }
 
         RestoreBloodsuckerPassives(ent.Owner);
+        _alerts.ClearAlert(ent.Owner, ent.Comp.Alert);
 
         _audio.PlayPredicted(ent.Comp.DeactivateSound, ent.Owner, ent.Owner);
         _popup.PopupPredicted(

@@ -290,7 +290,7 @@ public sealed partial class BloodsuckerFeedSystem : EntitySystem
             return;
 
         var current = (float) sol.Comp.Solution.Volume;
-        var max = (float) sol.Comp.Solution.MaxVolume;
+        var max = (float) bs.BloodReferenceSolution.Volume;
         if (max <= 0f)
             return;
 

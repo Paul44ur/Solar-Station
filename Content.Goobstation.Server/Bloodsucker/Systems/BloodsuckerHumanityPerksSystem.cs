@@ -5,6 +5,9 @@ using Content.Goobstation.Shared.Bloodsuckers.Components.Vassals;
 using Content.Goobstation.Shared.Bloodsuckers.Events;
 using Content.Goobstation.Shared.Bloodsuckers.Systems;
 using Content.Server.Antag;
+using Content.Server.Chat.Systems;
+using Content.Shared.Chat;
+using Content.Shared.IdentityManagement;
 using Content.Shared.Mind;
 using Content.Shared.Mindshield.Components;
 using Content.Shared.Mobs.Systems;
@@ -25,6 +28,7 @@ public sealed partial class BloodsuckerHumanityPerksSystem : EntitySystem
     [Dependency] private SharedMindSystem _mind = default!;
     [Dependency] private MobStateSystem _mobState = default!;
     [Dependency] private AntagSelectionSystem _antag = default!;
+    [Dependency] private ChatSystem _chat = default!;
 
     public override void Initialize()
     {
@@ -54,15 +58,17 @@ public sealed partial class BloodsuckerHumanityPerksSystem : EntitySystem
 
         if (!CanBeBeguiled(target, out var reason))
         {
-            _popup.PopupEntity(Loc.GetString(reason, ("target", target)), ent, ent, PopupType.SmallCaution);
+            _popup.PopupEntity(Loc.GetString(reason, ("target", Identity.Entity(target, EntityManager))), ent, ent, PopupType.SmallCaution);
             return;
         }
 
         args.Handled = true;
         beguile.Offers[target] = _timing.CurTime + beguile.OfferDuration;
 
-        _popup.PopupEntity(Loc.GetString("bloodsucker-beguile-offered", ("target", target)), ent, ent);
-        _antag.SendBriefing(target, Loc.GetString("bloodsucker-beguile-offer", ("user", ent.Owner)), Color.DarkRed, null);
+        _chat.TrySendInGameICMessage(ent, Loc.GetString("bloodsucker-beguile-whisper"), InGameICChatType.Whisper, false);
+        _popup.PopupEntity(Loc.GetString("bloodsucker-beguile-offered", ("target", Identity.Entity(target, EntityManager))), ent, ent);
+        _popup.PopupEntity(Loc.GetString("bloodsucker-beguile-offer-popup", ("user", Identity.Entity(ent, EntityManager))), target, target, PopupType.Large);
+        _antag.SendBriefing(target, Loc.GetString("bloodsucker-beguile-offer", ("user", Identity.Entity(ent, EntityManager))), Color.DarkRed, null);
     }
 
     private bool CanBeBeguiled(EntityUid target, out string reason)
@@ -110,6 +116,7 @@ public sealed partial class BloodsuckerHumanityPerksSystem : EntitySystem
         AddComp(user, new BloodsuckerVassalComponent { Master = ent.Owner });
         bloodsucker.VassalsMade++;
 
-        _popup.PopupEntity(Loc.GetString("bloodsucker-beguile-accepted", ("target", user)), ent, ent, PopupType.Medium);
+        _popup.PopupEntity(Loc.GetString("bloodsucker-beguile-accepted", ("target", Identity.Entity(user, EntityManager))), ent, ent, PopupType.Medium);
+        _popup.PopupEntity(Loc.GetString("bloodsucker-beguile-accepted-vassal", ("user", Identity.Entity(ent, EntityManager))), user, user, PopupType.Large);
     }
 }

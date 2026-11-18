@@ -16,7 +16,7 @@ public sealed partial class BloodsuckerMesmerizeEvent : EntityTargetActionEvent;
 public sealed partial class BloodsuckerHasteEvent : WorldTargetActionEvent;
 public sealed partial class BloodsuckerClaimEvent : EntityTargetActionEvent;
 public sealed partial class BloodsuckerVassalizeEvent : EntityTargetActionEvent;
-public sealed partial class BloodsuckerOlfactionEvent : EntityTargetActionEvent;
+public sealed partial class BloodsuckerOlfactionEvent : WorldTargetActionEvent;
 #endregion
 
 #region Non-targeted
