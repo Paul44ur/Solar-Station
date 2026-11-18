@@ -55,3 +55,12 @@ public record struct BloodsuckerDrankBloodEvent(float Amount);
 /// </summary>
 [ByRefEvent]
 public record struct BloodsuckerForgetEvent(EntityUid Target);
+
+/// <summary>
+/// Sent to a Forget victim's client so it hides their recent in-character chat.
+/// </summary>
+[Robust.Shared.Serialization.NetSerializable, Serializable]
+public sealed class BloodsuckerForgetChatEvent(float seconds) : EntityEventArgs
+{
+    public float Seconds = seconds;
+}
