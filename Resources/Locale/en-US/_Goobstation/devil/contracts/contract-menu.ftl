@@ -169,6 +169,7 @@ devil-clause-contract-might = The Contractee surrenders a measure of their stren
 # Solar: mass contract
 devil-mass-contract-menu-title = Mass Contract
 devil-contract-menu-damned-price = Price from those whose soul you already own:
+devil-contract-menu-damned-negative = For those whose soul you already own, the balance would be {$weight}. Add more prices or pick a bigger one.
 devil-mass-contract-sent = You offer your contract to {$count} {$count ->
     [one] mortal
    *[other] mortals

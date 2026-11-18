@@ -65,7 +65,11 @@ public sealed partial class DevilContractClauseMenu : DefaultWindow
         _damnedPicker = new OptionButton { HorizontalExpand = true };
         for (var i = 0; i < DamnedPrices.Length; i++)
             _damnedPicker.AddItem(DevilClauseNames.GetName(DamnedPrices[i]), i);
-        _damnedPicker.OnItemSelected += args => _damnedPicker.SelectId(args.Id);
+        _damnedPicker.OnItemSelected += args =>
+        {
+            _damnedPicker.SelectId(args.Id);
+            UpdateWeight();
+        };
         _damnedRow.AddChild(_damnedPicker);
         root.AddChild(_damnedRow);
 
@@ -90,6 +94,7 @@ public sealed partial class DevilContractClauseMenu : DefaultWindow
     public void SetMass(bool mass)
     {
         _damnedRow.Visible = mass;
+        UpdateWeight();
         Title = Loc.GetString(mass ? "devil-mass-contract-menu-title" : "devil-contract-menu-title");
     }
 
@@ -131,6 +136,19 @@ public sealed partial class DevilContractClauseMenu : DefaultWindow
     {
         var weight = _clauses.Values.Where(c => c.Box.Pressed).Sum(c => c.Weight);
         _weightLabel.Text = Loc.GetString("devil-contract-menu-weight", ("weight", weight));
-        _confirmButton.Disabled = weight < 0;
+
+        // Solar: in a mass contract, those whose soul is already owned pay the chosen price instead,
+        // and that version of the deal has to stay signable too.
+        var damnedWeight = weight;
+        if (_damnedRow.Visible
+            && _clauses.TryGetValue("soulownership", out var soul) && soul.Box.Pressed
+            && _clauses.TryGetValue(DamnedPrices[_damnedPicker.SelectedId], out var price))
+        {
+            damnedWeight = weight - soul.Weight + (price.Box.Pressed ? 0 : price.Weight);
+            if (damnedWeight < 0)
+                _weightLabel.Text += "\n" + Loc.GetString("devil-contract-menu-damned-negative", ("weight", damnedWeight));
+        }
+
+        _confirmButton.Disabled = weight < 0 || damnedWeight < 0;
     }
 }

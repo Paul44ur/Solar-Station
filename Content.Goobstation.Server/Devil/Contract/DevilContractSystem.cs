@@ -398,6 +398,19 @@ public sealed partial class DevilContractSystem : EntitySystem
 
     #region Helper Events
 
+    /// <summary>
+    /// Solar: things that have no soul to sell at all, regardless of any earlier deal.
+    /// </summary>
+    public bool HasNoSoul(EntityUid user)
+    {
+        return HasComp<SiliconComponent>(user)
+               || HasComp<DroneComponent>(user)
+               || HasComp<ChangelingComponent>(user)
+               || HasComp<BorgChassisComponent>(user)
+               || HasComp<SoullessComponent>(user)
+               || HasComp<PossessedComponent>(user);
+    }
+
     public bool IsUserValid(EntityUid user, out string failReason)
     {
         if (HasComp<CondemnedComponent>(user)

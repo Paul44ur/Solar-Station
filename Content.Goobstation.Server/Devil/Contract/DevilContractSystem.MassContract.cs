@@ -87,6 +87,10 @@ public sealed partial class DevilContractSystem
             if (TryComp<CondemnedComponent>(target, out var condemned) && !condemned.SoulOwnedNotDevil)
             {
                 clauses = chosen.Select(id => id == "soulownership" ? damnedPrice : id).Distinct().ToList();
+
+                // A swap that leaves the deal below 0 would be unsignable, so this mortal isn't offered it.
+                if (ClausesWeight(clauses) < 0)
+                    continue;
             }
 
             var offer = Spawn(MassContractProto, Transform(target).Coordinates);
@@ -113,6 +117,18 @@ public sealed partial class DevilContractSystem
         _popupSystem.PopupEntity(Loc.GetString("devil-mass-contract-sent", ("count", offered)), devil, devil, PopupType.Medium);
     }
 
+    private int ClausesWeight(List<string> clauses)
+    {
+        var weight = 0;
+        foreach (var id in clauses)
+        {
+            if (_prototypeManager.TryIndex(id, out DevilClausePrototype? clause))
+                weight += clause.ClauseWeight;
+        }
+
+        return weight;
+    }
+
     private bool IsMassContractTarget(Entity<MobStateComponent> target, EntityUid devil)
     {
         return target.Owner != devil
@@ -121,7 +137,8 @@ public sealed partial class DevilContractSystem
                && TryComp<MindContainerComponent>(target, out var mind) && mind.HasMind
                && !HasComp<DevilComponent>(target)
                && !HasComp<DevilMinionComponent>(target)
-               && !HasComp<SoulHarvestedComponent>(target);
+               && !HasComp<SoulHarvestedComponent>(target)
+               && !HasNoSoul(target); // Solar: no IPCs, changelings, possessed bodies and the like
     }
 
     private void OnOfferAnswered(Entity<DevilMassContractOfferComponent> ent, ref DevilMassContractOfferMessage args)
@@ -129,7 +146,8 @@ public sealed partial class DevilContractSystem
         var target = ent.Comp.Target;
         if (args.Actor != target
             || !TryComp<DevilContractComponent>(ent, out var contract)
-            || contract.ContractOwner is not { } devil)
+            || contract.ContractOwner is not { } devil
+            || TerminatingOrDeleted(devil))
             return;
 
         _ui.CloseUi(ent.Owner, DevilMassContractOfferUiKey.Key);
@@ -193,7 +211,8 @@ public sealed partial class DevilContractSystem
                 continue;
 
             _ui.CloseUi(uid, DevilMassContractOfferUiKey.Key);
-            _popupSystem.PopupEntity(Loc.GetString("devil-mass-contract-crumbles"), offer.Target, offer.Target, PopupType.Medium);
+            if (Exists(offer.Target))
+                _popupSystem.PopupEntity(Loc.GetString("devil-mass-contract-crumbles"), offer.Target, offer.Target, PopupType.Medium);
             QueueDel(uid);
         }
     }

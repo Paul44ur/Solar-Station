@@ -12,6 +12,8 @@ using Content.Shared.Damage.Prototypes;
 using Content.Shared.Damage.Systems;
 using Content.Shared.Examine;
 using Content.Shared.IdentityManagement;
+using Content.Shared.Mind;
+using Content.Shared.Damage.Components;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
@@ -32,9 +34,12 @@ public sealed partial class SoulHarvestSystem : EntitySystem
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private IPrototypeManager _proto = default!;
     [Dependency] private Contract.DevilContractSystem _contract = default!;
+    [Dependency] private MobThresholdSystem _thresholds = default!;
+    [Dependency] private SharedMindSystem _mind = default!;
 
     private static readonly ProtoId<DamageGroupPrototype> Brute = "Brute";
     private static readonly ProtoId<DamageGroupPrototype> Burn = "Burn";
+    private static readonly ProtoId<DamageTypePrototype> Cellular = "Cellular";
 
     public override void Initialize()
     {
@@ -52,6 +57,7 @@ public sealed partial class SoulHarvestSystem : EntitySystem
         var target = args.Target;
         if (!TryComp<CondemnedComponent>(target, out var condemned)
             || condemned.SoulOwnedNotDevil
+            || !OwnsSoul(ent, target)
             || !TryComp<MobStateComponent>(target, out var mobState)
             || mobState.CurrentState == MobState.Dead)
         {
@@ -81,11 +87,34 @@ public sealed partial class SoulHarvestSystem : EntitySystem
         _popup.PopupEntity(Loc.GetString("devil-soul-harvest-victim"), target, target, PopupType.LargeCaution);
         _popup.PopupEntity(Loc.GetString("devil-soul-harvest-user", ("target", Identity.Entity(target, EntityManager))), ent, ent, PopupType.Medium);
 
-        _mobState.ChangeMobState(target, MobState.Dead, mobState, ent);
+        // Deal enough damage to actually be dead, so the next hit can't flip the body back to alive.
+        if (_thresholds.TryGetThresholdForState(target, MobState.Dead, out var deadThreshold)
+            && TryComp<DamageableComponent>(target, out var damageable))
+        {
+            var needed = deadThreshold.Value - damageable.TotalDamage + 1;
+            if (needed > 0)
+                _damageable.TryChangeDamage(target, new DamageSpecifier(_proto.Index(Cellular), needed), true, origin: ent);
+        }
+
+        if (mobState.CurrentState != MobState.Dead)
+            _mobState.ChangeMobState(target, MobState.Dead, mobState, ent);
 
         // Feeding on the soul mends the Archdevil.
         var heal = new DamageSpecifier(_proto.Index(Brute), -150) + new DamageSpecifier(_proto.Index(Burn), -100);
         _damageable.TryChangeDamage(ent.Owner, heal, true, false);
+    }
+
+    /// <summary>
+    /// The Archdevil can only harvest a soul it collected itself. Its old bodies are gone after changing form,
+    /// so this checks the souls it remembers by mind rather than the condemned mark's owner.
+    /// </summary>
+    private bool OwnsSoul(EntityUid devil, EntityUid target)
+    {
+        if (!TryComp<DevilComponent>(devil, out var devilComp))
+            return false;
+
+        var source = _mind.TryGetMind(target, out var mindId, out _) ? mindId : target;
+        return devilComp.SoulSources.Contains(source);
     }
 
     private void OnExamined(Entity<SoulHarvestedComponent> ent, ref ExaminedEvent args)

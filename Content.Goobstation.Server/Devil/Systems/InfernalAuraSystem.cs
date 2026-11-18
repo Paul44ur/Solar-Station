@@ -3,6 +3,7 @@
 using Content.Goobstation.Shared.Devil;
 using Content.Goobstation.Shared.Devil.Actions;
 using Content.Goobstation.Shared.Devil.Components;
+using Content.Shared.Damage;
 using Content.Shared.Damage.Systems;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
@@ -79,7 +80,11 @@ public sealed partial class InfernalAuraSystem : EntitySystem
 
     private void OnArchdevilDamageModify(Entity<ArchdevilComponent> ent, ref DamageModifyEvent args)
     {
-        if (args.Damage.DamageDict.TryGetValue("Holy", out var holy) && holy > 0)
-            args.Damage.DamageDict["Holy"] = holy * ArchdevilHolyMultiplier;
+        if (!args.Damage.DamageDict.TryGetValue("Holy", out var holy) || holy <= 0)
+            return;
+
+        // Work on a copy so the weapon's own damage values are never changed.
+        args.Damage = new DamageSpecifier(args.Damage);
+        args.Damage.DamageDict["Holy"] = holy * ArchdevilHolyMultiplier;
     }
 }

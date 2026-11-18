@@ -1,6 +1,6 @@
-using System.Linq;
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using System.Linq;
 using System.Text;
 using Content.Goobstation.Shared.Devil.Roles;
 using Content.Goobstation.Shared.Devil;
