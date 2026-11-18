@@ -24,6 +24,10 @@ public sealed class DevilMassContractOfferBoundUserInterface : BoundUserInterfac
     {
         base.Open();
 
+        // Solar: the offer is spawned and opened in the same tick, which can open this BUI twice.
+        if (_window != null)
+            return;
+
         _window = this.CreateWindow<DefaultWindow>();
         _window.Title = Loc.GetString("devil-mass-contract-offer-title");
         _window.MinWidth = 340;

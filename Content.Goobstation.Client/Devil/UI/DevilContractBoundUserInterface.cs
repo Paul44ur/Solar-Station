@@ -19,6 +19,11 @@ public sealed class DevilContractBoundUserInterface : BoundUserInterface
     {
         base.Open();
 
+        // Solar: the contract is spawned and its menu opened in the same tick, which can open this BUI twice.
+        // Creating a second window crashes the client, so keep the one we have.
+        if (_menu != null)
+            return;
+
         _menu = this.CreateWindow<DevilContractClauseMenu>();
         _menu.Confirmed += (clauses, damned) =>
         {
