@@ -1,0 +1,18 @@
+- type: antag
+  id: BloodsuckerVassal
+  name: roles-antag-bloodsucker-vassal-name
+  antagonist: true
+  setPreference: false
+  objective: roles-antag-bloodsucker-vassal-objective
+
+- type: entity
+  parent: BaseMindRoleAntag
+  id: MindRoleBloodsuckerVassal
+  name: Bloodsucker Vassal Role
+  components:
+  - type: MindRole
+    antagPrototype: BloodsuckerVassal
+    exclusiveAntag: false
+    roleType: Familiar
+    subtype: role-subtype-bloodsucker-vassal
+  - type: BloodsuckerVassalRole

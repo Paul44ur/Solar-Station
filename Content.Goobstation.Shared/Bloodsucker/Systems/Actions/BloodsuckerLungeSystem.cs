@@ -82,7 +82,10 @@ public sealed partial class BloodsuckerLungeSystem : EntitySystem
             BreakOnDamage = true,
         };
 
-        _doAfter.TryStartDoAfter(doAfterArgs);
+        if (!_doAfter.TryStartDoAfter(doAfterArgs))
+            return;
+
+        args.Handled = true;
 
         if (ent.Comp.ActionLevel < 4)
             _popup.PopupPredicted(Loc.GetString("bloodsucker-lunge-windup"),
@@ -112,7 +115,7 @@ public sealed partial class BloodsuckerLungeSystem : EntitySystem
         var targetPos = _transform.GetWorldPosition(target);
         var delta = targetPos - vampPos;
 
-        if (delta.LengthSquared() < 0.01f)
+        if (delta.LengthSquared() < 0.01f || IsAdjacent(ent.Owner, target))
         {
             // Already adjacent, skip the throw and resolve immediately
             LungeEnd(ent, target);
@@ -120,6 +123,11 @@ public sealed partial class BloodsuckerLungeSystem : EntitySystem
         }
 
         _audio.PlayPredicted(ent.Comp.LungeSound, ent.Owner, ent.Owner);
+
+        // Solar: mark the leap so the collide/land handlers actually finish the lunge. This was never set,
+        // so the vampire flew at the target and nothing happened when it arrived.
+        ent.Comp.IsLeaping = true;
+        Dirty(ent);
 
         // Throw toward target
         var targetCoords = _transform.GetMoverCoordinates(target);
