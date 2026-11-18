@@ -160,7 +160,10 @@ bloodsucker-olfaction-distance-far = far away
 
 # Sol
 
-bloodsucker-sol-warn-first = Solar flares will bombard the station in {$minutes} minutes. Seek cover in a coffin or closet.
+bloodsucker-sol-warn-first = Sol rises in {$minutes} {$minutes ->
+    [one] minute
+    *[other] minutes
+}! Get into your coffin or a closet.
 bloodsucker-sol-warn-final = Solar flares are imminent! You have {$seconds} seconds to find cover!
 bloodsucker-sol-warn-imminent = Seek cover, for Sol rises!
 bloodsucker-sol-day-start = Solar flares bombard the station! Stay in cover for the next {$minutes} minutes!

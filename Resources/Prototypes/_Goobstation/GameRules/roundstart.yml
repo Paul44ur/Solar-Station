@@ -438,6 +438,37 @@
     - RoundstartAntag
 
 - type: entity
+  parent: BaseGameRule
+  id: Bloodsucker
+  components:
+  - type: BloodsuckerRule
+  - type: GameRule
+    minPlayers: 15
+  - type: AntagObjectives
+    objectives:
+    - BloodsuckerSurviveObjective
+    - BloodsuckerDrinkBloodObjective
+    - BloodsuckerRankObjective
+    - BloodsuckerVassalObjective
+  - type: AntagSelection
+    selectionTime: IntraPlayerSpawn
+    agentName: bloodsucker-roundend-name
+    definitions:
+    - prefRoles: [ Bloodsucker ]
+      max: 1
+      chaosScore: 200
+      jobBlacklist: [ Chaplain ]
+      blacklist:
+        components:
+        - CommandStaff
+        - Silicon
+      mindRoles:
+      - MindRoleBloodsucker
+  - type: Tag
+    tags:
+    - RoundstartAntag
+
+- type: entity
   parent: Thief
   id: OopsAllThieves
   components:

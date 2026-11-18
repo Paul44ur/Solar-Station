@@ -1,0 +1,74 @@
+- type: bloodsuckerRank
+  id: BloodsuckerRank1
+  rank: 1
+  components:
+  - type: BloodsuckerFeed
+  - type: BloodsuckerClaim
+  - type: BloodsuckerMasquerade
+  - type: BloodsuckerBrawl
+  - type: WeakToHoly
+    alwaysTakeHoly: true
+  - type: BloodsuckerHumanity
+  actions:
+  - ActionBloodsuckerFeed
+  - ActionBloodsuckerClaim
+  - ActionBloodsuckerSense
+  - ActionBloodsuckerMasquerade
+  - ActionBloodsuckerBrawl
+
+- type: bloodsuckerRank
+  id: BloodsuckerRank2
+  rank: 2
+  components:
+  - type: BloodsuckerMaterialize
+  - type: BloodsuckerVassalize
+    humanityCost: 5
+  - type: BloodsuckerBeguile
+  - type: BloodsuckerOlfaction
+  - type: BloodsuckerHaste
+  actions:
+  - ActionBloodsuckerMaterialize
+  - ActionBloodsuckerVassalize
+  - ActionBloodsuckerBeguile
+  - ActionBloodsuckerOlfactionAcquire
+  - ActionBloodsuckerHaste
+
+- type: bloodsuckerRank
+  id: BloodsuckerRank3
+  rank: 3
+  components:
+  - type: BloodsuckerLunge
+  - type: BloodsuckerHelpVassal
+  - type: BloodsuckerVeil
+  actions:
+  - ActionBloodsuckerLunge
+  - ActionBloodsuckerHelpVassal
+  - ActionBloodsuckerVeil
+
+- type: bloodsuckerRank
+  id: BloodsuckerRank4
+  rank: 4
+  components:
+  - type: BloodsuckerMesmerize
+  - type: BloodsuckerCloak
+  actions:
+  - ActionBloodsuckerMesmerize
+  - ActionBloodsuckerCloak
+
+- type: bloodsuckerRank
+  id: BloodsuckerRank5
+  rank: 5
+  components:
+  - type: BloodsuckerTrespass
+  - type: BloodsuckerFortitude
+  actions:
+  - ActionBloodsuckerTrespass
+  - ActionBloodsuckerFortitude
+
+- type: bloodsuckerRank
+  id: BloodsuckerRank6
+  rank: 6
+  components:
+  - type: BloodsuckerGoHome
+  actions:
+  - ActionBloodsuckerGoHome

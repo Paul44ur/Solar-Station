@@ -1,6 +1,8 @@
 using Content.Goobstation.Shared.Bloodsuckers.Components;
 using Content.Goobstation.Shared.Bloodsuckers.Components.Actions;
 using Content.Goobstation.Shared.Bloodsuckers.Events;
+using Content.Shared.Alert;
+using Content.Shared.Damage.Systems;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Popups;
@@ -15,6 +17,7 @@ public abstract partial class SharedBloodsuckerMasqueradeSystem : EntitySystem
     [Dependency] private SharedAudioSystem _audio = default!;
     [Dependency] private BloodsuckerHumanitySystem _humanity = default!;
     [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private AlertsSystem _alerts = default!;
 
     private EntityQuery<MobStateComponent> _mobStateQuery;
 
@@ -26,6 +29,8 @@ public abstract partial class SharedBloodsuckerMasqueradeSystem : EntitySystem
 
         SubscribeLocalEvent<BloodsuckerMasqueradeComponent, BloodsuckerMasqueradeEvent>(OnMasquerade);
         SubscribeLocalEvent<BloodsuckerMasqueradeComponent, ComponentShutdown>(OnShutdown);
+        SubscribeLocalEvent<BloodsuckerMasqueradeComponent, DamageChangedEvent>(OnDamageChanged);
+        SubscribeLocalEvent<BloodsuckerMasqueradeComponent, BloodsuckerActionsGatedEvent>(OnGated);
     }
 
     private void OnMasquerade(Entity<BloodsuckerMasqueradeComponent> ent, ref BloodsuckerMasqueradeEvent args)
@@ -51,9 +56,32 @@ public abstract partial class SharedBloodsuckerMasqueradeSystem : EntitySystem
             Deactivate(ent);
     }
 
+    private void OnGated(EntityUid uid, BloodsuckerMasqueradeComponent comp, BloodsuckerActionsGatedEvent args)
+    {
+        if (comp.Active)
+            Deactivate((uid, comp));
+    }
+
+    private void OnDamageChanged(Entity<BloodsuckerMasqueradeComponent> ent, ref DamageChangedEvent args)
+    {
+        if (!ent.Comp.Active || !args.DamageIncreased || args.DamageDelta is not { } delta)
+            return;
+
+        ent.Comp.DamageTaken += delta.GetTotal().Float();
+        if (ent.Comp.DamageTaken < ent.Comp.BreakDamage)
+            return;
+
+        Deactivate(ent);
+        _popup.PopupPredicted(
+            Loc.GetString("bloodsucker-masquerade-broken-user"),
+            Loc.GetString("bloodsucker-masquerade-broken-others", ("user", ent.Owner)),
+            ent.Owner, ent.Owner, PopupType.LargeCaution);
+    }
+
     protected virtual void Activate(Entity<BloodsuckerMasqueradeComponent> ent)
     {
         ent.Comp.Active = true;
+        ent.Comp.DamageTaken = 0f;
         ent.Comp.UpdateTimer = _timing.CurTime + ent.Comp.UpdateDelay;
 
         EnsureComp<BloodsuckerMasqueradingComponent>(ent.Owner);
@@ -65,6 +93,7 @@ public abstract partial class SharedBloodsuckerMasqueradeSystem : EntitySystem
         }
 
         RemoveBloodsuckerPassives(ent.Owner);
+        _alerts.ShowAlert(ent.Owner, ent.Comp.Alert);
 
         _audio.PlayPredicted(ent.Comp.ActivateSound, ent.Owner, ent.Owner);
         _popup.PopupPredicted(
@@ -87,6 +116,7 @@ public abstract partial class SharedBloodsuckerMasqueradeSystem : EntitySystem
         }
 
         RestoreBloodsuckerPassives(ent.Owner);
+        _alerts.ClearAlert(ent.Owner, ent.Comp.Alert);
 
         _audio.PlayPredicted(ent.Comp.DeactivateSound, ent.Owner, ent.Owner);
         _popup.PopupPredicted(
@@ -113,6 +143,12 @@ public abstract partial class SharedBloodsuckerMasqueradeSystem : EntitySystem
     {
         if (comp.DisabledInFrenzy && HasComp<BloodsuckerFrenzyComponent>(uid))
             return false;
+
+        if (_humanity.IsLowHumanity(uid))
+        {
+            _popup.PopupPredicted(Loc.GetString("bloodsucker-humanity-too-low"), uid, uid, PopupType.SmallCaution);
+            return false;
+        }
 
         if (comp.HumanityCost != 0f && TryComp(uid, out BloodsuckerHumanityComponent? humanity))
             _humanity.ChangeHumanity(

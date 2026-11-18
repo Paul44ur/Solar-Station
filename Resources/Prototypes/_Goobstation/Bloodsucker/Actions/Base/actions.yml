@@ -15,6 +15,8 @@
     whitelist:
       components:
       - Body
+      tags:
+      - Bloodpack
     canTargetSelf: false
     event: !type:BloodsuckerFeedEvent
 
@@ -48,7 +50,7 @@
       sprite: _Goobstation/Bloodsucker/Actions/actions_bloodsucker.rsi
       state: power_speed
   - type: TargetAction
-    range: 2
+    range: 12
   - type: WorldTargetAction
     event: !type:BloodsuckerHasteEvent
 
@@ -129,7 +131,7 @@
 - type: entity
   id: ActionBloodsuckerOlfactionAcquire
   name: Sanguine Olfaction
-  description: Click near a blood puddle to lock onto its owner.
+  description: Click on or near a blood puddle to lock onto its owner.
   components:
   - type: Action
     useDelay: 20
@@ -138,9 +140,8 @@
       sprite: _Goobstation/Bloodsucker/Actions/actions_bloodsucker.rsi
       state: power_olfac
   - type: TargetAction
-    range: 2
-  - type: EntityTargetAction
-    canTargetSelf: false
+    range: 4
+  - type: WorldTargetAction
     event: !type:BloodsuckerOlfactionEvent
 
 - type: entity
@@ -291,3 +292,23 @@
       state: power_human
   - type: InstantAction
     event: !type:BloodsuckerMasqueradeEvent {}
+
+- type: entity
+  id: ActionBloodsuckerBeguile
+  name: Beguile
+  description: Offer a mortal the dark gift. If they accept, they become your vassal, no rack needed. Requires high humanity.
+  components:
+  - type: Action
+    useDelay: 10
+    itemIconStyle: BigAction
+    icon:
+      sprite: _Goobstation/Bloodsucker/Actions/actions_bloodsucker.rsi
+      state: power_hunter
+  - type: TargetAction
+    range: 2
+  - type: EntityTargetAction
+    whitelist:
+      components:
+      - Body
+    canTargetSelf: false
+    event: !type:BloodsuckerBeguileEvent

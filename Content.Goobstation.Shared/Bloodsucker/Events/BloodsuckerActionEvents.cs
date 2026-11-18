@@ -10,12 +10,13 @@ namespace Content.Goobstation.Shared.Bloodsuckers.Events;
 
 public sealed partial class BloodsuckerFeedEvent : EntityTargetActionEvent;
 public sealed partial class BloodsuckerBrawlEvent : EntityTargetActionEvent;
+public sealed partial class BloodsuckerBeguileEvent : EntityTargetActionEvent;
 public sealed partial class BloodsuckerLungeEvent : EntityTargetActionEvent;
 public sealed partial class BloodsuckerMesmerizeEvent : EntityTargetActionEvent;
 public sealed partial class BloodsuckerHasteEvent : WorldTargetActionEvent;
 public sealed partial class BloodsuckerClaimEvent : EntityTargetActionEvent;
 public sealed partial class BloodsuckerVassalizeEvent : EntityTargetActionEvent;
-public sealed partial class BloodsuckerOlfactionEvent : EntityTargetActionEvent;
+public sealed partial class BloodsuckerOlfactionEvent : WorldTargetActionEvent;
 #endregion
 
 #region Non-targeted

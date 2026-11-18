@@ -220,7 +220,7 @@ public sealed partial class BloodsuckerBrawlSystem : EntitySystem
 
     private void PerformPunch(Entity<BloodsuckerComponent> ent, EntityUid target, BloodsuckerBrawlComponent comp)
     {
-        var damage = comp.PunchBaseDamage + comp.ActionLevel * comp.PunchDamagePerLevel;
+        var damage = (comp.PunchBaseDamage + comp.ActionLevel * comp.PunchDamagePerLevel) * _humanity.GetMonsterMultiplier(ent);
 
         var damageSpec = new DamageSpecifier();
         damageSpec.DamageDict["Blunt"] = damage;

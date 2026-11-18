@@ -137,15 +137,15 @@ public sealed partial class BloodsuckerOlfactionSystem : EntitySystem
         args.Handled = true;
     }
 
-    private EntityUid? FindBloodOwner(EntityUid vampire, BloodsuckerOlfactionComponent comp, EntityUid clickedTarget)
+    private EntityUid? FindBloodOwner(EntityUid vampire, BloodsuckerOlfactionComponent comp, EntityCoordinates clicked)
     {
-        // Check if they clicked directly on a blood puddle
-        if (HasComp<PuddleComponent>(clickedTarget))
-            return GetDnaOwnerFromPuddle(clickedTarget);
+        return FindBloodOwnerNear(vampire, clicked, comp.ScanRange)
+            ?? FindBloodOwnerNear(vampire, Transform(vampire).Coordinates, comp.ScanRange);
+    }
 
-        // Otherwise scan nearby puddles
-        foreach (var puddle in _lookup.GetEntitiesInRange<PuddleComponent>(
-                     Transform(vampire).Coordinates, comp.ScanRange))
+    private EntityUid? FindBloodOwnerNear(EntityUid vampire, EntityCoordinates coords, float range)
+    {
+        foreach (var puddle in _lookup.GetEntitiesInRange<PuddleComponent>(coords, range))
         {
             var owner = GetDnaOwnerFromPuddle(puddle.Owner);
             if (owner != null && owner != vampire)

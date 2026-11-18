@@ -3,12 +3,14 @@ using Content.Goobstation.Shared.Bloodsuckers.Components;
 using Content.Goobstation.Shared.Bloodsuckers.Components.Actions;
 using Content.Goobstation.Shared.Bloodsuckers.Events;
 using Content.Shared.DoAfter;
+using Content.Shared.Interaction;
+using Content.Shared.Speech.Muting;
 using Content.Shared.Eye.Blinding.Components;
 using Content.Shared.IdentityManagement.Components;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Popups;
-using Content.Shared.StatusEffectNew;
+using Content.Shared.StatusEffect;
 using Content.Shared.Stunnable;
 using Content.Shared.Traits.Assorted;
 using Robust.Shared.Audio.Systems;
@@ -20,10 +22,12 @@ public sealed partial class BloodsuckerMesmerizeSystem : EntitySystem
 {
     [Dependency] private SharedDoAfterSystem _doAfter = default!;
     [Dependency] private SharedStunSystem _stun = default!;
-    [Dependency] private StatusEffectsSystem _status = default!;
     [Dependency] private BloodsuckerHumanitySystem _humanity = default!;
     [Dependency] private SharedAudioSystem _audio = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private RotateToFaceSystem _rotateToFace = default!;
+    [Dependency] private SharedTransformSystem _transform = default!;
+    [Dependency] private StatusEffectsSystem _status = default!;
 
     public override void Initialize()
     {
@@ -82,6 +86,9 @@ public sealed partial class BloodsuckerMesmerizeSystem : EntitySystem
             return;
         }
 
+        // Solar: turn toward the target first, so only the target has to be looking at the vampire.
+        _rotateToFace.TryFaceCoordinates(ent.Owner, _transform.GetWorldPosition(target));
+
         // Facing checks (level 5 waives the target-must-face-you requirement)
         if (!IsFacing(ent.Owner, target))
         {
@@ -114,7 +121,8 @@ public sealed partial class BloodsuckerMesmerizeSystem : EntitySystem
             NeedHand = false,
         };
 
-        _doAfter.TryStartDoAfter(doAfterArgs);
+        if (_doAfter.TryStartDoAfter(doAfterArgs))
+            args.Handled = true;
     }
 
     private void OnMesmerizeDoAfter(Entity<BloodsuckerComponent> ent, ref BloodsuckerMesmerizeDoAfterEvent args)
@@ -161,13 +169,19 @@ public sealed partial class BloodsuckerMesmerizeSystem : EntitySystem
 
         // Mute at level 1+
         if (comp.ActionLevel >= 1)
-            _status.TryAddStatusEffect(target, "Muted", out _, duration);
+            _status.TryAddStatusEffect<MutedComponent>(target, "Muted", duration, true); // Solar: "Muted" is an old-style status effect
 
         _audio.PlayPredicted(comp.Sound, ent.Owner, ent.Owner);
 
         _popup.PopupPredicted(
             Loc.GetString("bloodsucker-mesmerize-success", ("target", target)),
             ent.Owner, ent.Owner, PopupType.Medium);
+
+        if (_humanity.IsHighHumanity(ent))
+        {
+            var forgetEv = new BloodsuckerForgetEvent(target);
+            RaiseLocalEvent(ent, ref forgetEv);
+        }
     }
 
     private bool TryUseCosts(Entity<BloodsuckerComponent> ent, BloodsuckerMesmerizeComponent comp)

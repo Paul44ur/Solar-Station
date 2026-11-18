@@ -30,6 +30,12 @@ public sealed class BloodsuckerHudSystem : EntitySystem
             return;
         }
 
+        if (TryComp<BloodsuckerHumanityComponent>(ent, out var humanity) && args.Alert == humanity.Alert)
+        {
+            args.Amount = (int) humanity.CurrentHumanity;
+            return;
+        }
+
         // Sol alert
         if (args.Alert == ent.Comp.SolAlert)
         {

@@ -88,6 +88,23 @@ public sealed partial class BloodsuckerFeedComponent : Component
     [DataField]
     public float HumanityCost = 0f;
 
+    [DataField]
+    public float SeenHumanityLoss = 3f;
+
+    [DataField]
+    public float FatalDrainHumanityLoss = 10f;
+
+    [DataField]
+    public float MercyHumanityGain = 1f;
+
+    /// <summary>Blood restored by drinking one blood pack.</summary>
+    [DataField]
+    public float BloodpackBlood = 30f;
+
+    /// <summary>Blood packs count this much toward rank compared to fresh blood.</summary>
+    [DataField]
+    public float BloodpackRankFactor = 0.5f;
+
     /// <summary>
     /// If true, this action cannot be started while the vampire is in frenzy.
     /// </summary>
