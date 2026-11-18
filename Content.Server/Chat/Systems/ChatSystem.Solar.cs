@@ -20,6 +20,10 @@ public sealed partial class ChatSystem
         if (listenerName == name || string.IsNullOrEmpty(name))
             return wrapped;
 
+        var tagged = $"[Name]{name}[/Name]";
+        if (wrapped.Contains(tagged, StringComparison.Ordinal))
+            return wrapped.Replace(tagged, $"[Name]{listenerName}[/Name]");
+
         var index = wrapped.IndexOf(name, StringComparison.Ordinal);
         return index < 0 ? wrapped : wrapped.Remove(index, name.Length).Insert(index, listenerName);
     }
